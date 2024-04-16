@@ -4,7 +4,7 @@ class Menu:
     def __init__(self):
         self.choices = ["0"]     # by default, the menu only contains the option to quit it
         self.userChoice = ""
-        print("\n\n|    Welcome to team 5's FA&RegEx project user interface    |")
+        print("\n\n|    Welcome to team 5's Finite Automata project user interface    |")
 
     def quit(self):
         print("Are you sure you want to quit ? [Y/N]")
@@ -22,7 +22,7 @@ class Menu:
 
             print("\t0. Exit this program")
 
-
+            print("\nWhat do you want to do ?\n")
             self.userChoice = self.getUserChoice()
             self.manageUserChoice()
             
@@ -33,5 +33,5 @@ class Menu:
 
 
     def getUserChoice(self):
-        userChoice = input("\nWhat do you want to do ?\n~ ")
+        userChoice = input("~ ")
         return userChoice
