@@ -1,4 +1,3 @@
-import automatas_splitter
 from lib import *
 
 if __name__ == "__main__":
