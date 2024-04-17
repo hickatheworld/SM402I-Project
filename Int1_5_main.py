@@ -1,4 +1,3 @@
-from lib import *
 import Int1_5_algorithms as algo
 import Int1_5_lib as libr
 
