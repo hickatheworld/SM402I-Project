@@ -54,32 +54,37 @@ def display_automaton(automaton):
     """
 
     print(f"Automaton #{automaton['id']}")
+    if "E" in [transition["input"] for transition in automaton["transitions"]]:
+        letters = automaton["alphabet"] + ["E"]
+    else:
+        letters = automaton["alphabet"]
     # First line with the alphabet
-    print(end="|        " * 2)
-    for letter in automaton['alphabet']:
-        print(end="|    {}    ".format(letter))
+    print(end="|{:^8}".format(""))
+    print(end="|{:^10}".format(""))
+    for letter in letters:
+        print(end="|{:^10}".format(letter))
     print(end="|")
 
     for state in automaton["states"]:
         # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
-            print("\n", end="|  <->  ")
+            print("\n", end="|{:^8}".format("<->"))
         elif state in automaton["initialStates"]:
-            print("\n", end="|   ->   ")
+            print("\n", end="|{:^8}".format("->"))
         elif state in automaton["finalStates"]:
-            print("\n", end="|   <-   ")
+            print("\n", end="|{:^8}".format("<-"))
         else:
             print("\n", end="|        ")
         # Second column of each line => display the state
-        print(end="|    {}   ".format(state))
+        print(end="|{:^10}".format(state))
 
         # Other columns of each line => destination states by each letter
-        for letter in automaton["alphabet"]:
+        for letter in letters :
             # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
             # if there is no destination then bruh --
             if not list_dest:
-                print(end="|"+"--".center(9))
+                print(end="|{:^10}".format("--"))
             # else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
             else:
                 str_dest = list_dest[0]
@@ -87,6 +92,6 @@ def display_automaton(automaton):
                 while i<len(list_dest) :
                     str_dest += f",{list_dest[i]}"
                     i +=1
-                print(end="|"+str_dest.center(9))
+                print(end="|{:^10}".format(str_dest))
         print("|")
 
