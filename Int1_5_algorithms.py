@@ -1,9 +1,10 @@
 import os
 import json
 
+
+# Parses the automata data from a given file according to it's ID
 def get_automaton_by_id(automaton_id, filename):
     """
-        Parses automata data from a given file according to it's ID
         Args:
             ID : The id of the automaton filepath: Path of the file to parse.
         Returns:
@@ -21,54 +22,53 @@ def get_automaton_by_id(automaton_id, filename):
                     {"from": transition[0], "input": transition[1], "to": transition[2]}
                     for transition in automaton["transitions"]
                 ],
-                "initialState": automaton["initialState"],
+                "initialStates": automaton["initialStates"],
                 "finalStates": automaton["finalStates"]
             }
 
     # If the automaton with the given ID is not found
     return None
 
-def save_automata(automata: list) -> None:
+
+# Saves given automaton dictionary to file.
+def save_automaton(automaton):
     """
-    Saves given automata to file.
     Args:
-        automata: automata to save
+        automaton: automaton to save
+    Returns :
+        nothing
     """
-    os.makedirs('automata', exist_ok=True)
-    for automaton in automata:
-        file_name = f"INT1-5-{automaton['id']}.txt"
-        path = os.path.join('automata',file_name)
-        with open(path, "w") as f:
-            content = json.dumps(automaton, indent=4, separators=(",", ":"))
-            f.write(content)
+    # converts dictionary to a json formatted string
+    json_str = json.dumps(automaton)
+    with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
+        file.write(json_str)
 
-
-def display_automaton(automaton: dict) -> None:
+# Displays given automaton
+def display_automaton(automaton):
     """
-    WIP. Displays given automaton
-
     Args:
         automaton: Automaton to display
+    Returns:
+        nothing
     """
 
     print(f"Automaton #{automaton['id']}")
-
+    print(end="|        " * 2)
     for letter in automaton['alphabet']:
-        print(letter,end=' '*4)
-    print()
-    for state in automaton['states']:
-        line = ''
-        line +='I' if state in automaton['initialStates'] else ' '
-        line +='F' if state in automaton['finalStates'] else ' '
-        line +=' '
-        print(f'{line} {state}',end=' '*4)
-        for symbol in automaton['alphabet']:
-            transitions = ''
-            for t in automaton['transitions']:
-                if t[0]==state and t[1]==symbol:
-                    transitions+=t[2] + ','
-            transitions = transitions[:-1]
-            if transitions=='':
-                transitions = '-'
-            print(transitions,end=' '*4)
-        print()
+        print(end="|    {}    " .format(letter))
+    print(end="|")
+    # above it's ok - first line$
+    print("\n", end="----------"*(len(automaton['alphabet'])+2)) # limit of first line
+
+
+    for state in automaton["states"]:
+        if state in automaton["initialStates"] and state in automaton["finalStates"]:
+            print("\n", end="|  <->  ")
+        elif state in automaton["initialStates"]:
+            print("\n", end="|   ->   ")
+        elif state in automaton["finalStates"]:
+            print("\n", end="|   <-   ")
+        else:
+            print("\n", end="|        ")
+        print(end="|    {}    ".format(state))
+        #a remplir - transitions
