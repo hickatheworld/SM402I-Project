@@ -1,19 +1,32 @@
-import json
 import os
+import json
 
-def read_automata(filepath: str) -> list:
+def get_automaton_by_id(automaton_id, filename):
     """
-    Parses automata data from given file.
-    Args:
-        filepath: Path of the file to parse.
-    Returns:
-        A list of parsed automata.
+        Parses automata data from a given file according to it's ID
+        Args:
+            ID : The id of the automaton filepath: Path of the file to parse.
+        Returns:
+            A dictionary for the automata who's ID was given
     """
-    with open(filepath, "r") as data:
-        content = json.loads(data.read())
-        content = content["automatas"]
-    return content
+    with open(filename, "r") as file:
+        data = json.load(file)
+    for automaton in data["automatas"]:
+        if automaton["id"] == str(automaton_id):  # IDs are strings in the JSON
+            return {
+                "id": automaton["id"],
+                "states": automaton["states"],
+                "alphabet": automaton["alphabet"],
+                "transitions": [
+                    {"from": transition[0], "input": transition[1], "to": transition[2]}
+                    for transition in automaton["transitions"]
+                ],
+                "initialState": automaton["initialState"],
+                "finalStates": automaton["finalStates"]
+            }
 
+    # If the automaton with the given ID is not found
+    return None
 
 def save_automata(automata: list) -> None:
     """
