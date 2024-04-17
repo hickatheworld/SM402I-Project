@@ -16,8 +16,9 @@ if __name__ == "__main__":
                 automata_dict = algo.get_automaton_by_id(int(ID), "automatas.json")
                 algo.save_automaton(automata_dict)
                 print(automata_dict)
-
-    print('Good bye.')
+                algo.display_automaton(automata_dict)
+            
+    print('Good bye !')
 
     
         
