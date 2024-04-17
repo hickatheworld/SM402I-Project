@@ -1,9 +1,10 @@
 import os
 import json
 
+
+# Parses the automata data from a given file according to it's ID
 def get_automaton_by_id(automaton_id, filename):
     """
-        Parses automata data from a given file according to it's ID
         Args:
             ID : The id of the automaton filepath: Path of the file to parse.
         Returns:
@@ -28,19 +29,21 @@ def get_automaton_by_id(automaton_id, filename):
     # If the automaton with the given ID is not found
     return None
 
-def save_automata(automata: list) -> None:
+
+# Saves given automaton dictionary to file.
+def save_automaton(automaton):
     """
-    Saves given automata to file.
     Args:
-        automata: automata to save
+        automaton: automaton to save
+    Returns :
+        nothing
     """
-    os.makedirs('automata', exist_ok=True)
-    for automaton in automata:
-        file_name = f"INT1-5-{automaton['id']}.txt"
-        path = os.path.join('automata',file_name)
-        with open(path, "w") as f:
-            content = json.dumps(automaton, indent=4, separators=(",", ":"))
-            f.write(content)
+    # converts dictionary to a json formatted string
+    json_str = json.dumps(automaton)
+    with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
+        file.write(json_str)
+
+
 
 
 def display_automaton(automaton: dict) -> None:
@@ -54,7 +57,7 @@ def display_automaton(automaton: dict) -> None:
     print(f"Automaton #{automaton['id']}")
 
     for letter in automaton['alphabet']:
-        print(letter,end=' '*4)
+        print(letter, end=' '*4)
     print()
     for state in automaton['states']:
         line = ''

@@ -9,14 +9,14 @@ if __name__ == "__main__":
     while selected_action != 1: # to replace with the index of 'exit' action when actions are changed
         selected_action = libr.menu(actions)
         match selected_action:
-            case 0:
+            case 0: # save by id
                 ID = input("Give an integer ID between 1 and 44: ")
                 while not('1' <= ID <= '44'):
                     ID = input("Give an integer ID between 1 and 44: ")
                 automata_dict = algo.get_automaton_by_id(int(ID), "automatas.json")
+                algo.save_automaton(automata_dict)
                 print(automata_dict)
-                print('todo')
-        print()
+
     print('Good bye.')
 
     
