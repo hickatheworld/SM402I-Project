@@ -43,25 +43,25 @@ def save_automaton(automaton):
     with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
         file.write(json_str)
 
+
 # Displays given automaton
 def display_automaton(automaton):
     """
     Args:
-        automaton: Automaton to display
+        automaton: Automaton to display as a table
     Returns:
         nothing
     """
 
     print(f"Automaton #{automaton['id']}")
+    # First line with the alphabet
     print(end="|        " * 2)
     for letter in automaton['alphabet']:
-        print(end="|    {}    " .format(letter))
+        print(end="|    {}    ".format(letter))
     print(end="|")
-    # above it's ok - first line$
-    print("\n", end="----------"*(len(automaton['alphabet'])+2)) # limit of first line
-
 
     for state in automaton["states"]:
+        # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
             print("\n", end="|  <->  ")
         elif state in automaton["initialStates"]:
@@ -70,5 +70,23 @@ def display_automaton(automaton):
             print("\n", end="|   <-   ")
         else:
             print("\n", end="|        ")
-        print(end="|    {}    ".format(state))
-        #a remplir - transitions
+        # Second column of each line => display the state
+        print(end="|    {}   ".format(state))
+
+        # Other columns of each line => destination states by each letter
+        for letter in automaton["alphabet"]:
+            # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
+            list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
+            # if there is no destination then bruh --
+            if not list_dest:
+                print(end="|"+"--".center(9))
+            # else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
+            else:
+                str_dest = list_dest[0]
+                i = 1
+                while i<len(list_dest) :
+                    str_dest += f",{list_dest[i]}"
+                    i +=1
+                print(end="|"+str_dest.center(9))
+        print("|")
+
