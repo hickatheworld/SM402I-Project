@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # asking the user the ID of the automaton he wants, creating a dictionary for it, and saving it into a text file
     print("To begin with, you will chose an automaton to work on !")
     ID = input("Give an integer ID between 1 and 44: ")
-    while not ('1' <= ID <= '44') and (len(ID) == 1 and not ('1' <= ID <= '9')):
+    while len(ID)> 2 or (not ('1' <= ID <= '44') and not ('5' <= ID <= '9')):
         ID = input("Give an integer ID between 1 and 44: ")
     automata_dict = algo.get_automaton_by_id(int(ID), "src/automata/automatas.json") # creating a dictionary for the chosen automaton
     algo.save_automaton(automata_dict) # saving it into a text file
