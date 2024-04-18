@@ -1,5 +1,5 @@
 from typing import List
-
+import sys
 
 def welcome_print() -> None:
     """
@@ -33,6 +33,10 @@ def menu(options: List[str]) -> int:
     while user_input not in range(1, len(options) + 1):
         try:
             user_input = int(input('> '))
-        except:
+        except KeyboardInterrupt:
+            print("Ctrl C detected : Goodbye !\n")
+            # The user typed Ctrl C => Exit the program
+            sys.exit()
+        finally:
             user_input = -1 # fallback value to perform a new loop round.
     return user_input - 1
