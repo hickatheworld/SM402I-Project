@@ -1,5 +1,8 @@
-src/
-.idea
+# exclude all the modified automatas
+src/automata/modified/  
+
+# aswell as various folders thay may be created by IDE's or compiler
+.idea/
 __pycache__/
 
 

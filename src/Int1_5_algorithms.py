@@ -39,7 +39,9 @@ def save_automaton(automaton):
         nothing
     """
     # converts dictionary to a json formatted string
-    json_str = json.dumps(automaton)
+    json_str = json.dumps(automaton, separators=(",", ":"), indent=4)       # adding indent=4 allows for more beautiful txt files
+    os.makedirs("src/automata/modified", exist_ok=True) # create folder for modified automata
+    os.chdir("src/automata/modified")   # change to this folder to save them into it
     with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
         file.write(json_str)
 
@@ -53,18 +55,20 @@ def display_automaton(automaton):
         nothing
     """
 
-    print(f"Automaton #{automaton['id']}")
-    if "E" in [transition["input"] for transition in automaton["transitions"]]:
+    print(f"Automaton #{automaton['id']}") 
+    if "E" in [transition["input"] for transition in automaton["transitions"]]: # "E" is the symbol for epsilon
         letters = automaton["alphabet"] + ["E"]
     else:
         letters = automaton["alphabet"]
-    # First line with the alphabet
+
+    #                                    DISPLAYING HEADER LINE                                       #
     print(end="|{:^8}".format(""))
     print(end="|{:^10}".format(""))
     for letter in letters:
         print(end="|{:^10}".format(letter))
     print(end="|")
 
+    #                                    DISPLAYING TABLE BODY                                       #
     for state in automaton["states"]:
         # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
@@ -82,7 +86,7 @@ def display_automaton(automaton):
         for letter in letters :
             # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
-            # if there is no destination then bruh --
+            # if there is no destination then bruh (aka "--")
             if not list_dest:
                 print(end="|{:^10}".format("--"))
             # else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
@@ -93,5 +97,6 @@ def display_automaton(automaton):
                     str_dest += f",{list_dest[i]}"
                     i +=1
                 print(end="|{:^10}".format(str_dest))
-        print("|")
+        print("|", end="")
+    print()
 

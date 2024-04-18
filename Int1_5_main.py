@@ -1,7 +1,7 @@
-import Int1_5_algorithms as algo
-import Int1_5_lib as libr
-import Int1_5_standardization as stan
-import Int1_5_determinization as dete
+from src import Int1_5_algorithms as algo
+from src import Int1_5_lib as libr
+from src import Int1_5_standardization as stan
+from src import Int1_5_determinization as dete
 
 if __name__ == "__main__":
     libr.welcome_print()
@@ -13,7 +13,7 @@ if __name__ == "__main__":
     ID = input("Give an integer ID between 1 and 44: ")
     while not ('1' <= ID <= '44') and (len(ID) == 1 and not ('1' <= ID <= '9')):
         ID = input("Give an integer ID between 1 and 44: ")
-    automata_dict = algo.get_automaton_by_id(int(ID), "automatas.json") # creating a dictionary for the chosen automaton
+    automata_dict = algo.get_automaton_by_id(int(ID), "src/automata/automatas.json") # creating a dictionary for the chosen automaton
     algo.save_automaton(automata_dict) # saving it into a text file
 
     # Menu starts
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         selected_action = libr.menu(actions)
         match selected_action:
             case 0: # displaying the automaton which's ID was given
-                print(automata_dict)
+                # print(automata_dict)
                 algo.display_automaton(automata_dict)
 
             case 1: # stuff linked with standardization
