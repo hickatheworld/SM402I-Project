@@ -34,6 +34,7 @@ if __name__ == "__main__":
                         standardize = input("Would you like to make it standard ? (Y - N) ")
                     if standardize == "Y":
                         stan.standardize(automata_dict)
+                        print("Done standardizing ! \n")
 
             case 2: # stuff linked with determinization
                 if dete.is_deterministic(automata_dict): # checking if deterministic
@@ -46,7 +47,7 @@ if __name__ == "__main__":
                 else:
                     print("The automaton is not complete...")
                     print("Let's complete it !")
-                    dete.completion(automata_dict)
+                    completed_automaton = dete.completion(automata_dict)
 
 
     print('Good bye !')

@@ -80,6 +80,6 @@ def completion(automaton: dict) -> dict:
         automaton['states'].append('P')
 
     # returning the completed automaton
-    return {'states': automaton['states'], 'alphabet': automaton['alphabet'], 'transitions': completed_transitions, 'initial_state': automaton['initial_state'], 'accepting_states': automaton['accepting_states']}
+    return {'states': automaton['states'], 'alphabet': automaton['alphabet'], 'transitions': completed_transitions, 'initialStates': automaton['initialStates'], 'finalStates': automaton['finalStates']}
 
 

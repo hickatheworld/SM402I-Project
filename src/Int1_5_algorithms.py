@@ -98,5 +98,5 @@ def display_automaton(automaton):
                     i +=1
                 print(end="|{:^10}".format(str_dest))
         print("|", end="")
-    print()
+    print("\n")
 
