@@ -31,7 +31,8 @@ automata.json file, located under the src/ folder.
 
 # 🎁 Bonus : 
 
-❓How to read the result from our display_automaton function🤓
+❓ How to read the result from our display_automaton function 🤓
+
 below is an exercpt of the transition table printed by this function : 
 
 <img src="https://github.com/hickatheworld/SM402I-Project/assets/90071735/eb3d1b90-a48e-4b0d-a6cd-33e3c6ef7695" alt="screenshot from the terminal" width="400"/>
