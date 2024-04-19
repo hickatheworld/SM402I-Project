@@ -7,7 +7,7 @@ def recognize_word(word, automaton): #test if a word is in the automaton
             if transition['from'] == current_state and transition['input'] == letter:
                 next_state = transition['to']
                 break
-        if next_state is None: # if no transition is found for the current letter then the word doesn't exist in the automaton
+        if next_state is None: #if no transition is found for the current letter then the word doesn't exist in the automaton
             print(f"Word {word} is not recognized by the automaton.")
             return
         current_state = next_state
