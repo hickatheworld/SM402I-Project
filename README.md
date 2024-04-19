@@ -18,13 +18,14 @@
 on which automaton you want to work. You can pick any of the 44 test automata which are grouped in the 
 automata.json file, located under the src/ folder. 
 2. Once you chose your automaton you can do various things, concerning either :
-   2.1. Display it - in the terminal 
-   2.2. Standardize it - wip
-   2.3. Determinize it - wip
+   * 1. Display it - in the terminal 
+   * 2. Standardize it - wip
+   * 3. Determinize it - wip
+   * 4. Exit - quit the program
 
 
 
-# 📜 Conventions : 
+# 📜 Conventions and techinalities : 
 
 - the empty word (\epsilon) is represented by the symbol "E" in our code
 - when completing, you sometimes need to add a "bin" state. This state is identified as "P" in our code
