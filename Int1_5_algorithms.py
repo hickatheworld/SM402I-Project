@@ -8,7 +8,7 @@ def get_automaton_by_id(automaton_id, filename):
         Args:
             ID : The id of the automaton filepath: Path of the file to parse.
         Returns:
-            A dictionary for the automata who's ID was given
+            A dictionary for the automata whose ID was given
     """
     with open(filename, "r") as file:
         data = json.load(file)
@@ -79,7 +79,7 @@ def display_automaton(automaton):
         print(end="|{:^10}".format(state))
 
         # Other columns of each line => destination states by each letter
-        for letter in letters :
+        for letter in letters:
             # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
             # if there is no destination then bruh --
@@ -91,7 +91,7 @@ def display_automaton(automaton):
                 i = 1
                 while i<len(list_dest) :
                     str_dest += f",{list_dest[i]}"
-                    i +=1
+                    i += 1
                 print(end="|{:^10}".format(str_dest))
         print("|")
 
