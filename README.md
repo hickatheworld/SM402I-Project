@@ -8,7 +8,9 @@
     ║                                               ║
     ╚═══════════════════════════════════════════════╝
 ```
-
+👨‍💻 How to run it : 
+1. clone the repo
+2. run the main.py file with python ```python INT1_5_main.py ``` 
 
 conventions : 
 - the empty word (\epsilon) is represented by the symbol "E" in our code
