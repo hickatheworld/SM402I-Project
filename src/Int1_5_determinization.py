@@ -7,10 +7,9 @@ def is_deterministic(automaton: dict) -> bool:
     Args: The automaton to analyse
     Returns: True if deterministic, False otherwise
     """
-    # checking for epsilon transitions
-    for transition in automaton['transitions']:
-        if transition['input'] == 'E':
-            return False
+    # Check if more than 1 entry state
+    if len(automaton["initialStates"]) > 1:
+        return False
 
     # checking for multiple transitions from the same state with the same labelled transition
     dico_transitions = {}
