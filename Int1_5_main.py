@@ -5,7 +5,7 @@ from src import Int1_5_determinization as dete
 
 if __name__ == "__main__":
     libr.welcome_print()
-    actions = ['Display automaton', 'Standardize automata', 'Determinize automata', 'Exit']
+    actions = ['Display automaton', 'Standardize automaton', 'Determinize automaton', 'Exit']
     selected_action = None
 
     # Menu starts
