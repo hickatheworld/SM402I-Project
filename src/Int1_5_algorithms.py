@@ -2,18 +2,20 @@ import os
 import json
 
 
-# Parses the automata data from a given file according to it's ID
-def get_automaton_by_id(automaton_id, filename):
+def get_automaton_by_id(automaton_id: int, filename: str):
     """
-        Args:
-            ID : The id of the automaton filepath: Path of the file to parse.
-        Returns:
-            A dictionary for the automata who's ID was given
+    Parses the automata data into a text file according to the ID given by the user.
+    Args:
+        ID : The id of the automaton filepath: Path of the file to parse.
+    Returns:
+        A dictionary for the automata which's ID was given
     """
     with open(filename, "r") as file:
         data = json.load(file)
     for automaton in data["automatas"]:
-        if automaton["id"] == str(automaton_id):  # IDs are strings in the JSON
+        # IDs are strings in the JSON
+        if automaton["id"] == str(automaton_id):
+            # Returning a dictionary with renamed keys for clarity
             return {
                 "id": automaton["id"],
                 "states": automaton["states"],
@@ -30,27 +32,30 @@ def get_automaton_by_id(automaton_id, filename):
     return None
 
 
-# Saves given automaton dictionary to file.
-def save_automaton(automaton):
+def save_automaton(automaton: dict):
     """
+    Saves the given automaton to a text file.
     Args:
         automaton: automaton to save
     Returns :
         nothing
     """
-    # converts dictionary to a json formatted string
-    json_str = json.dumps(automaton, separators=(",", ":"), indent=4)       # adding indent=4 allows for more beautiful txt files
-    os.makedirs("src/automata/modified", exist_ok=True) # create folder for modified automata
-    os.chdir("src/automata/modified")   # change to this folder to save them into it
+    # Converts dictionary to a json formatted string
+    # Adding indent=4 allows for more beautiful txt files
+    json_str = json.dumps(automaton, separators=(",", ":"), indent=4)
+    # Creating a folder for modified automata
+    os.makedirs("src/automata/modified", exist_ok=True)
+    # Changing to this folder to save them into it
+    os.chdir("src/automata/modified")
     with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
         file.write(json_str)
 
 
-# Displays given automaton
-def display_automaton(automaton):
+def display_automaton(automaton: dict):
     """
+    Displays the given automaton.
     Args:
-        automaton: Automaton to display as a table
+        automaton: automaton to display as a table
     Returns:
         nothing
     """
@@ -86,10 +91,10 @@ def display_automaton(automaton):
         for letter in letters :
             # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
-            # if there is no destination then bruh (aka "--")
+            # If there is no destination then "--"
             if not list_dest:
                 print(end="|{:^10}".format("--"))
-            # else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
+            # Else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
             else:
                 str_dest = list_dest[0]
                 i = 1
