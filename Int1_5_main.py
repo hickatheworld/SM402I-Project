@@ -35,6 +35,7 @@ if __name__ == "__main__":
                     save = libr.closed_question('Would you like to save it?')
                     if save:
                         algo.save_automaton(standardized)
+                        print(f'{standardized["id"]} saved.')
                         automata.append(standardized)
             case 3: # Determinize
                 selected_automaton = libr.choose_automaton(automata)
@@ -48,17 +49,19 @@ if __name__ == "__main__":
                         algo.display_automaton(completed_automaton)
                         save = libr.closed_question('Would you like to save it?')
                         if save:
-                            algo.save_automaton(standardized)
-                            automata.append(standardized)
+                            algo.save_automaton(completed_automaton)
+                            print(f'{completed_automaton["id"]} saved.')
+                            automata.append(completed_automaton)
                 else:
                     print("The automaton is not deterministic")
-                    determinized_automata = dete.determinization_and_completion_automaton(selected_automaton)
+                    determinized_automaton = dete.determinization_and_completion_automaton(selected_automaton)
                     print('Determinized automaton:')
-                    algo.display_automaton(determinized_automata)
+                    algo.display_automaton(determinized_automaton)
                     save = algo.closed_question('Would you like to save it?')
                     if save:
-                        algo.save_automaton(standardized)
-                        automata.append(standardized)
+                        algo.save_automaton(determinized_automaton)
+                        print(f'{determinized_automaton["id"]} saved.')
+                        automata.append(determinized_automaton)
 
     print('Good bye !')
 
