@@ -59,7 +59,7 @@ def completion(automaton: dict) -> dict:
         language.append(transition['input'])
 
     # List for completed transitions
-    completed_transitions = automaton['transitions'][:]
+    completed_transitions = automaton['transitions'].copy()
 
     # Checking if all transition from each state are labelled with all symbols of the language (again)
     for state in automaton['states']:
@@ -78,7 +78,14 @@ def completion(automaton: dict) -> dict:
         automaton['states'].append('P')
 
     # Returning the completed automaton
-    return {'states': automaton['states'], 'alphabet': automaton['alphabet'], 'transitions': completed_transitions, 'initialStates': automaton['initialStates'], 'finalStates': automaton['finalStates']}
+    return {
+        id: f'{automaton["id"]}_completed',
+        'states': automaton['states'], 
+        'alphabet': automaton['alphabet'], 
+        'transitions': completed_transitions, 
+        'initialStates': automaton['initialStates'], 
+        'finalStates': automaton['finalStates']
+        }
 
 
 
@@ -106,7 +113,7 @@ def determinize(automaton: dict) -> dict:
 
         # We should write a function to create automatons with parameters
         DFA = {
-            "id" : automaton["id"],
+            "id" : automaton["id"] + '_determinized',
             "states" : [new_initial_state],
             "transitions" : [],  # empty for now
             "initialStates" : [new_initial_state],
