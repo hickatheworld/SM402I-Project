@@ -189,21 +189,7 @@ def merge_states(original_automaton: dict,  states_to_merge: List[str]):
         Args: The automaton to determinize & the states to merge
         Returns: The dictionary with the merged_states & list of new_transitions
     """
-    
     merged_states = states_to_merge
-
-
-
-
-# TODO : Remove this testing part
-if __name__ == "__main__":
-
-    from Int1_5_algorithms import get_automaton_by_id
-
-    myautomaton = get_automaton_by_id("10", "src/automata/automata.json")
-
-    print(determinize(myautomaton))
-
 
 
 def determinization_and_completion_automaton(automaton: dict) ->dict:
@@ -221,5 +207,3 @@ def determinization_and_completion_automaton(automaton: dict) ->dict:
 
 
 
-
-# def display_complete_dererministic_automaton(CDFA):
