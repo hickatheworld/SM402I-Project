@@ -34,8 +34,9 @@ if __name__ == "__main__":
                     while standardize != "Y" and standardize != "N":
                         standardize = input("Would you like to make it standard ? (Y - N) ")
                     if standardize == "Y":
-                        stan.standardize(automata_dict)
+                        automata_dicy_SFA = stan.standardize(automata_dict)
                         print("Done standardizing ! \n")
+                        algo.display_automaton(automata_dicy_SFA)
 
             case 2: # DETERMINIZATION
                 # Checking if the automataton is deterministic
