@@ -25,7 +25,6 @@ def display_automaton(automaton: dict):
     Returns:
         nothing
     """
-    print(automaton)
     print(f"Automaton #{automaton['id']}") 
     if "E" in [transition["input"] for transition in automaton["transitions"]]: # "E" is the symbol for epsilon
         letters = automaton["alphabet"] + ["E"]
