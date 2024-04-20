@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     from Int1_5_algorithms import get_automaton_by_id
 
-    myautomaton = get_automaton_by_id("10", "src/automata/automatas.json")
+    myautomaton = get_automaton_by_id("10", "src/automata/automata.json")
 
     print(determinize(myautomaton))
 

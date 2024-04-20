@@ -1,37 +1,6 @@
 import os
 import json
 
-
-def get_automaton_by_id(automaton_id: int, filename: str):
-    """
-    Parses the automata data into a text file according to the ID given by the user.
-    Args:
-        ID : The id of the automaton filepath: Path of the file to parse.
-    Returns:
-        A dictionary for the automata which's ID was given
-    """
-    with open(filename, "r") as file:
-        data = json.load(file)
-    for automaton in data["automatas"]:
-        # IDs are strings in the JSON
-        if automaton["id"] == str(automaton_id):
-            # Returning a dictionary with renamed keys for clarity
-            return {
-                "id": automaton["id"],
-                "states": automaton["states"],
-                "alphabet": automaton["alphabet"],
-                "transitions": [
-                    {"from": transition[0], "input": transition[1], "to": transition[2]}
-                    for transition in automaton["transitions"]
-                ],
-                "initialStates": automaton["initialStates"],
-                "finalStates": automaton["finalStates"]
-            }
-
-    # If the automaton with the given ID is not found
-    return None
-
-
 def save_automaton(automaton: dict):
     """
     Saves the given automaton to a text file.
@@ -45,11 +14,8 @@ def save_automaton(automaton: dict):
     json_str = json.dumps(automaton, separators=(",", ":"), indent=4)
     # Creating a folder for modified automata
     os.makedirs("src/automata/modified", exist_ok=True)
-    # Changing to this folder to save them into it
-    os.chdir("src/automata/modified")
-    with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
+    with open(f"src/automata/modified/INT1-5-{automaton['id']}.txt", "w") as file:
         file.write(json_str)
-
 
 def display_automaton(automaton: dict):
     """
@@ -59,7 +25,7 @@ def display_automaton(automaton: dict):
     Returns:
         nothing
     """
-
+    print(automaton)
     print(f"Automaton #{automaton['id']}") 
     if "E" in [transition["input"] for transition in automaton["transitions"]]: # "E" is the symbol for epsilon
         letters = automaton["alphabet"] + ["E"]
@@ -73,7 +39,7 @@ def display_automaton(automaton: dict):
         print(end="|{:^10}".format(letter))
     print(end="|")
 
-    #                                    DISPLAYING TABLE BODY                                       #
+    # DISPLAYING TABLE BODY
     for state in automaton["states"]:
         # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
