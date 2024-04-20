@@ -5,18 +5,8 @@ from src import Int1_5_determinization as dete
 
 if __name__ == "__main__":
     libr.welcome_print()
-    actions = ['Display automata', 'Standardize automata', 'Determinize automata', 'Exit']
+    actions = ['Display automaton', 'Standardize automata', 'Determinize automata', 'Exit']
     selected_action = None
-
-    # Asking the user the ID of the automaton he wants
-    print("To begin with, you will chose an automaton to work on !")
-    ID = input("Give an integer ID between 1 and 44: ")
-    while len(ID)> 2 or (not ('1' <= ID <= '44') and not ('5' <= ID <= '9')):
-        ID = input("Give an integer ID between 1 and 44: ")
-    # Creating a dictionary for the chosen automaton
-    automata_dict = algo.get_automaton_by_id(int(ID), "src/automata/automatas.json")
-    # Saving it into a text file
-    algo.save_automaton(automata_dict)
 
     # Menu starts
     while selected_action != 3:
