@@ -30,6 +30,7 @@ def standardize(automaton: dict) -> dict:
         return automaton
     sfa = dict() # We construct a whole new standardized automaton.
     sfa['id'] = automaton['id'] + '_SFA'
+
     # We must make sure to shallow copy data from the base automaton
     # to avoid any alteration to it when interacting with the newly constructed SFA.
     # Note: The copy method of dict does not perform this operation on its values, hence we do it manually.
@@ -39,11 +40,14 @@ def standardize(automaton: dict) -> dict:
     sfa['initialStates'] = [entry]
     sfa['states'] = automaton['states'].copy() + [entry]
     sfa['finalStates'] = automaton['finalStates'].copy()
+
     # If any initial state of the base automaton is a final state, the new entry state must be final as well.
     if any(i in automaton['finalStates'] for i in automaton['initialStates']):
         sfa['finalStates'].append(entry)
+
     # The constructed SFA has all the transitions from the base automaton
     sfa['transitions'] = automaton['transitions'].copy()
+
     # And the new entry state I copies the transition of the previous initial states.
     sfa['transitions']+= [ {'from': entry, 'input': t['input'], 'to': t['to'] } 
                           for t in automaton['transitions'] 

@@ -22,9 +22,8 @@ def menu(options: List[str]) -> int:
     Returns:
         The 0-based user selection index.
     """
-
     # User input is 1-based, but the returned value is 0-based, 
-    # to facilitate any related list operations.
+    # To facilitate any related list operations.
     print(f'Please selection an option [1-{len(options)}]:')
     for i in range(len(options)):
         print(f'{i+1}. {options[i]}')
