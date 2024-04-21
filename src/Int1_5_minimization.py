@@ -98,16 +98,12 @@ def repartition(partition: list, index: int, automaton: dict):
         return final_sub_partition, pattern_of_subset
 
 
-def minimization(cdfa: dict):
+def minimization(cdfa: dict) -> tuple:
     """
         Minimizes the given automaton (that should already be a CDFA)
-        Args : the CDFA
+        Args : The automaton to minimize.
         Returns : Minimization_Possible (bool) Already_Minimal (bool), mcdfa (dict), partition (list of sub-partitions)
     """
-    print("We have to minimize this automaton :")
-    Algo.display_automaton(cdfa)
-
-    print("\n---STARTING MINIMIZATION---")
     step = -1
     partition = [cdfa['finalStates'], [state for state in cdfa['states'] if state not in cdfa['finalStates']]]
     partition_state = [False, False]
@@ -148,11 +144,10 @@ def minimization(cdfa: dict):
 
     # Verifying if the automaton was already
     if len(partition) == len(cdfa['states']):
-        print(f"We have the same number of states, so, the automaton #{cdfa['id']} was already minimal !")
         return True, cdfa, None
 
     # construct the new cdfa (create the dictionary that will be returned - using pattern of partition)
-    mcdfa = {"id": cdfa["id"], "states":[chr(65+i) for i in range(len(partition))],
+    mcdfa = {"id": cdfa["id"] + '_MINIMIZED', "states":[chr(65+i) for i in range(len(partition))],
              "alphabet": cdfa["alphabet"],
              "initialStates": cdfa["initialStates"],
              "finalStates": [],
@@ -172,9 +167,8 @@ def minimization(cdfa: dict):
 
 def display_minimal_automaton(already_minimal: bool, mcdfa: dict, partition):
     if already_minimal:
-        print("No changes is needed !: ")
-        Algo.display_automaton(mcdfa)
+        print("The automaton is already minimal.")
     else:
-        print("MINIMAL AUTOMATON: ")
+        print("Minimized automaton:")
         display_partition(partition, "final")
         Algo.display_automaton(mcdfa)
