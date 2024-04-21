@@ -74,6 +74,3 @@ if __name__ == "__main__":
                           if is_recogizned else f'The word {word} is not recognized by automaton #{selected_automaton["id"]}')
                     word = input('Enter a word, or / to stop word recognition: ')
     print('Good bye !')
-
-    
-        
