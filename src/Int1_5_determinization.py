@@ -1,5 +1,5 @@
 from typing import List
-
+import copy
 def is_deterministic(automaton: dict) -> bool:
     """
     Checks if the automaton is deterministic.
@@ -54,18 +54,19 @@ def completion(automaton: dict) -> dict:
     Args: The automaton to complete
     Returns: The completed automaton
     """
-    language = []
-    for transition in automaton['transitions']:
-        language.append(transition['input'])
+    copied_automata = copy.deepcopy(automaton)   # avoid any pass by reference
+    automaton = copied_automata
+    
 
-    # List for completed transitions
-    completed_transitions = automaton['transitions'][:]
+
+    # Create a list that will be completed with transitions
+    completed_transitions = automaton['transitions']
 
     # Checking if all transition from each state are labelled with all symbols of the language (again)
     for state in automaton['states']:
-        for symbol in language:
+        for symbol in automaton["alphabet"]:
             found = False
-            for transition in automaton['transitions']:
+            for transition in completed_transitions:
                 if transition['from'] == state and transition['input'] == symbol:
                     found = True
                     break
@@ -76,6 +77,9 @@ def completion(automaton: dict) -> dict:
     # Adding the bin state if it doesn't exist
     if 'P' not in automaton['states']:
         automaton['states'].append('P')
+        # and complete this bin state
+        for symbol in automaton["alphabet"]:
+            automaton["transitions"].append({"from": "P", "to": "P", "input": symbol})
 
     # Creating the completed automaton name
     automaton["id"] += "-COMPLETED"
@@ -262,4 +266,13 @@ def determinization_and_completion_automaton(automaton: dict) ->dict:
     return determinized
 
 
+if __name__ == "__main__":
+    from Int1_5_algorithms import get_automaton_by_id
+    from Int1_5_algorithms import display_automaton
+    import json
+    automata = json.load(open("src/automata/automata.json"))
+    
 
+    for myautomaton in automata:
+        completedOne = completion(myautomaton)
+        display_automaton(completedOne)

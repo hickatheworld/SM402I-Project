@@ -86,4 +86,3 @@ if __name__ == "__main__":
                     word = input('Enter a word, or / to stop word recognition: ')
     print('Good bye !')
 
-

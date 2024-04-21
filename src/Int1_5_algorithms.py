@@ -45,8 +45,7 @@ def save_automaton(automaton: dict):
     # Creating a folder for modified automata
     os.makedirs("src/automata/modified", exist_ok=True)
     # Changing to this folder to save them into it
-    os.chdir("src/automata/modified")
-    with open(f"INT1-5-{automaton['id']}.txt", "w") as file:
+    with open(f"src/automata/modified/INT1-5-{automaton['id']}.txt", "w") as file:
         file.write(json_str)
 
 
