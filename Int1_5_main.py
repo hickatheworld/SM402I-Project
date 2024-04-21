@@ -1,3 +1,5 @@
+import json
+from time import sleep
 from src import Int1_5_algorithms as algo
 from src import Int1_5_lib as libr
 from src import Int1_5_standardization as stan
@@ -5,60 +7,61 @@ from src import Int1_5_determinization as dete
 
 if __name__ == "__main__":
     libr.welcome_print()
-    actions = ['Display automata', 'Standardize automata', 'Determinize automata', 'Exit']
+    selected_automaton = None
+    automata = json.load(open('src/automata/automata.json'))
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize automaton', 'Exit']
     selected_action = None
-
-    # Asking the user the ID of the automaton he wants
-    print("To begin with, you will chose an automaton to work on !")
-    ID = input("Give an integer ID between 1 and 44: ")
-    while len(ID)> 2 or (not ('1' <= ID <= '44') and not ('5' <= ID <= '9')):
-        ID = input("Give an integer ID between 1 and 44: ")
-    # Creating a dictionary for the chosen automaton
-    automata_dict = algo.get_automaton_by_id(int(ID), "src/automata/automatas.json")
-    # Saving it into a text file
-    algo.save_automaton(automata_dict)
-
     # Menu starts
-    while selected_action != 3:
+    while selected_action != 4:
+        print('-'*5)
         selected_action = libr.menu(actions)
         match selected_action:
-            case 0: # Display of the automaton which's ID was given
-                algo.display_automaton(automata_dict)
-
-            case 1: # STANDARDIZATION
-                if stan.is_standard(automata_dict): # Checking if the automaton is standard
-                    print("The automaton is standard !")
+            case 0:
+                print("List of automata:")
+                for automaton in automata:
+                    print(automaton['id'], end=' ')
+                print()
+            case 1: # Display
+                selected_automaton = libr.choose_automaton(automata)
+                algo.display_automaton(selected_automaton)
+            case 2: # Standardize
+                selected_automaton = libr.choose_automaton(automata)
+                if stan.is_standard(selected_automaton):
+                    print("The automaton is already standard!")
                 else:
-                    print("The automaton is not standard...")
-                    standardize = input("Would you like to make it standard ? (Y - N) ")
-                    while standardize != "Y" and standardize != "N":
-                        standardize = input("Would you like to make it standard ? (Y - N) ")
-                    if standardize == "Y":
-                        stan.standardize(automata_dict)
-                        print("Done standardizing ! \n")
-
-            case 2: # DETERMINIZATION
-                # Checking if the automataton is deterministic
-                if dete.is_deterministic(automata_dict):
-                    print("The automaton is deterministic !")
-                    # Checking if the automaton is complete
-                    if dete.is_complete(automata_dict):
-                        print("The automaton is complete !")
+                    standardized = stan.standardize(selected_automaton)
+                    print('Standardized version:')
+                    algo.display_automaton(standardized)
+                    save = libr.closed_question('Would you like to save it?')
+                    if save:
+                        algo.save_automaton(standardized)
+                        print(f'{standardized["id"]} saved.')
+                        automata.append(standardized)
+            case 3: # Determinize
+                selected_automaton = libr.choose_automaton(automata)
+                if dete.is_deterministic(selected_automaton):
+                    print("The automaton is deterministic!")
+                    if dete.is_complete(selected_automaton):
+                        print("The automaton is already complete!")
                     else:
-                        print("The automaton is not complete...")
-                        print("Let's complete it...")
-                        # Completing it because it's not already
-                        completed_automaton = dete.completion(automata_dict)
-                        print("Done completing ! \n")
+                        completed_automaton = dete.completion(selected_automaton)
+                        print('Completed automaton:')
+                        algo.display_automaton(completed_automaton)
+                        save = libr.closed_question('Would you like to save it?')
+                        if save:
+                            algo.save_automaton(completed_automaton)
+                            print(f'{completed_automaton["id"]} saved.')
+                            automata.append(completed_automaton)
                 else:
-                    print("The automaton is not deterministic...")
-                    print("Let's complete and determinize it...")
-                    determinized_automata = dete.determinization_and_completion_automaton(automata_dict)
-                    print("We are now dealing with a complete deterministic finite automaton !")
-
-
-
-
+                    print("The automaton is not deterministic")
+                    determinized_automaton = dete.determinization_and_completion_automaton(selected_automaton)
+                    print('Determinized automaton:')
+                    algo.display_automaton(determinized_automaton)
+                    save = algo.closed_question('Would you like to save it?')
+                    if save:
+                        algo.save_automaton(determinized_automaton)
+                        print(f'{determinized_automaton["id"]} saved.')
+                        automata.append(determinized_automaton)
 
     print('Good bye !')
 

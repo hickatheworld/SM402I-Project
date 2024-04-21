@@ -9,18 +9,25 @@ def is_deterministic(automaton: dict) -> bool:
     # Check if there are more than one entry state
     if len(automaton["initialStates"]) > 1:
         return False
+    # Check if there are more than one entry state
+    if len(automaton["initialStates"]) > 1:
+        return False
 
+    # Checking for multiple transitions from the same state with the same labelled transition
     # Checking for multiple transitions from the same state with the same labelled transition
     dico_transitions = {}
     for transition in automaton['transitions']:
         key = (transition['from'], transition['input'])
         if key in dico_transitions:
             # If the key already exists, then we have two outgoing labels from the same state, hence not deterministic
+            # If the key already exists, then we have two outgoing labels from the same state, hence not deterministic
             return False
         else:
             # Otherwise we add it to the transition dictionary
+            # Otherwise we add it to the transition dictionary
             dico_transitions[key] = transition['to']
 
+    # All checks pass so the automaton is deterministic
     # All checks pass so the automaton is deterministic
     return True
 
@@ -35,6 +42,7 @@ def is_complete(automaton: dict) -> bool:
         language.append(transition['input'])
 
     # Checking if all transition from each state are labelled with all symbols of the language
+    # Checking if all transition from each state are labelled with all symbols of the language
     for state in automaton['states']:
         for symbol in language:
             found = False
@@ -45,6 +53,7 @@ def is_complete(automaton: dict) -> bool:
             if not found:
                 return False
 
+    # All checks pass so the automaton is complete
     # All checks pass so the automaton is complete
     return True
 
@@ -62,6 +71,7 @@ def completion(automaton: dict) -> dict:
     completed_transitions = automaton['transitions'][:]
 
     # Checking if all transition from each state are labelled with all symbols of the language (again)
+    # Checking if all transition from each state are labelled with all symbols of the language (again)
     for state in automaton['states']:
         for symbol in language:
             found = False
@@ -71,8 +81,10 @@ def completion(automaton: dict) -> dict:
                     break
             if not found:
                 # If a transition is not found for a symbol, we add it to a bin state we denote 'P'
+                # If a transition is not found for a symbol, we add it to a bin state we denote 'P'
                 completed_transitions.append({'from': state, 'to': 'P', 'input': symbol})
 
+    # Adding the bin state if it doesn't exist
     # Adding the bin state if it doesn't exist
     if 'P' not in automaton['states']:
         automaton['states'].append('P')

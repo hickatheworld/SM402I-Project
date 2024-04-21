@@ -59,7 +59,6 @@ def display_automaton(automaton: dict):
     Returns:
         nothing
     """
-
     print(f"Automaton #{automaton['id']}") 
     if "E" in [transition["input"] for transition in automaton["transitions"]]: # "E" is the symbol for epsilon
         letters = automaton["alphabet"] + ["E"]
@@ -73,7 +72,7 @@ def display_automaton(automaton: dict):
         print(end="|{:^10}".format(letter))
     print(end="|")
 
-    #                                    DISPLAYING TABLE BODY                                       #
+    # DISPLAYING TABLE BODY
     for state in automaton["states"]:
         # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
