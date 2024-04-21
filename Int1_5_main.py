@@ -4,15 +4,16 @@ from src import Int1_5_algorithms as algo
 from src import Int1_5_lib as libr
 from src import Int1_5_standardization as stan
 from src import Int1_5_determinization as dete
+from src import Int1_5_recognition as recog
 
 if __name__ == "__main__":
     libr.welcome_print()
     selected_automaton = None
     automata = json.load(open('src/automata/automata.json'))
-    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Exit']
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Try and recognize words', 'Exit']
     selected_action = None
     # Menu starts
-    while selected_action != 4:
+    while selected_action != len(actions)-1: 
         print('-'*5)
         selected_action = libr.menu(actions)
         match selected_action:
@@ -64,6 +65,9 @@ if __name__ == "__main__":
                         algo.save_automaton(determinized_automaton)
                         print(f'{determinized_automaton["id"]} saved.')
                         automata.append(determinized_automaton)
+            case 4: # Recognize
+                selected_automaton = libr.choose_automaton(automata)
+                recog.is_word_recognise(selected_automaton)
 
     print('Good bye !')
 
