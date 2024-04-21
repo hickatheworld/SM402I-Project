@@ -52,5 +52,4 @@ def standardize(automaton: dict) -> dict:
     sfa['transitions']+= [ {'from': entry, 'input': t['input'], 'to': t['to'] } 
                           for t in automaton['transitions'] 
                           if t['from'] in automaton['initialStates']]
-    print(sfa)
     return sfa
