@@ -101,7 +101,7 @@ if __name__ == "__main__":
                     algo.display_automaton(cdfa)
                     result = mini.minimization(cdfa)
                     mini.display_minimal_automaton(*result)
-                if not result[0]: # If the automaton was not already minimal
+                if result[0]: # If the automaton was not already minimal
                     save = libr.closed_question('Would you like to save it?')
                     if save:
                         algo.save_automaton(result[1])
