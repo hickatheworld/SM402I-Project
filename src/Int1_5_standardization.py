@@ -26,7 +26,7 @@ def standardize(automaton: dict) -> dict:
     Returns:
         The standardized automaton.
     """
-    if is_standard(automaton):
+    if is_standard(automaton) == 'standard':
         return automaton
     sfa = dict() # We construct a whole new standardized automaton.
     sfa['id'] = automaton['id'] + '_SFA'
@@ -38,7 +38,7 @@ def standardize(automaton: dict) -> dict:
     # Step 1 of standardization: Create a new entry state. 
     entry = 'I' if 'I' not in automaton['states'] else 'SFA_ENTRY' # Just making sure we don't override any existing state.
     sfa['initialStates'] = [entry]
-    sfa['states'] = automaton['states'].copy() + [entry]
+    sfa['states'] = [entry] + automaton['states'].copy()
     sfa['finalStates'] = automaton['finalStates'].copy()
 
     # If any initial state of the base automaton is a final state, the new entry state must be final as well.
@@ -52,4 +52,5 @@ def standardize(automaton: dict) -> dict:
     sfa['transitions']+= [ {'from': entry, 'input': t['input'], 'to': t['to'] } 
                           for t in automaton['transitions'] 
                           if t['from'] in automaton['initialStates']]
+    print(sfa)
     return sfa
