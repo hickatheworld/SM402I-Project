@@ -1,52 +1,78 @@
-import Int1_5_algorithms as algo
-import Int1_5_lib as libr
-import Int1_5_standardization as stan
-import Int1_5_determinization as dete
+import json
+from time import sleep
+from src import Int1_5_algorithms as algo
+from src import Int1_5_lib as libr
+from src import Int1_5_standardization as stan
+from src import Int1_5_determinization as dete
+from src import Int1_5_recognition as recog
 
 if __name__ == "__main__":
     libr.welcome_print()
-    actions = ['Display automata', 'Standardize automata', 'Determinize automata', 'Exit']
+    selected_automaton = None
+    automata = json.load(open('src/automata/automata.json'))
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton',
+               'Try and recognize words', 'Exit']
     selected_action = None
-
-    # asking the user the ID of the automaton he wants, creating a dictionary for it, and saving it into a text file
-    print("To begin with, you will chose an automaton to work on !")
-    ID = input("Give an integer ID between 1 and 44: ")
-    while not ((len(ID) <= 2 and ('1' <= ID <= '44')) or (len(ID) == 1 and ('5' <= ID <= '9'))):
-        ID = input("Give an integer ID between 1 and 44: ")
-    automata_dict = algo.get_automaton_by_id(int(ID),
-                                             "automatas.json")  # creating a dictionary for the chosen automaton
-    algo.save_automaton(automata_dict)  # saving it into a text file
-
     # Menu starts
-    while selected_action != 3:
+    while selected_action != len(actions) - 1:
+        print('-' * 5)
         selected_action = libr.menu(actions)
         match selected_action:
-            case 0:  # displaying the automaton which's ID was given
-                print(automata_dict)
-                algo.display_automaton(automata_dict)
-
-            case 1:  # stuff linked with standardization
-                if stan.is_standard(automata_dict):  # checking if standard
-                    print("The automaton is standard !")
+            case 0:
+                print("List of automata:")
+                for automaton in automata:
+                    print(automaton['id'], end=' ')
+                print()
+            case 1:  # Display
+                selected_automaton = libr.choose_automaton(automata)
+                algo.display_automaton(selected_automaton)
+            case 2:  # Standardize
+                selected_automaton = libr.choose_automaton(automata)
+                if stan.is_standard(selected_automaton):
+                    print("The automaton is already standard!")
                 else:
-                    print("The automaton is not standard...")
-                    standardize = input("Would you like to make it standard ? (Y - N) ")
-                    while standardize != "Y" and standardize != "N":
-                        standardize = input("Would you like to make it standard ? (Y - N) ")
-                    if standardize == "Y":
-                        stan.standardize(automata_dict)
-
-            case 2:  # stuff linked with determinization
-                if dete.is_deterministic(automata_dict):  # checking if deterministic
-                    print("The automaton is deterministic !")
+                    standardized = stan.standardize(selected_automaton)
+                    print('Standardized version:')
+                    algo.display_automaton(standardized)
+                    save = libr.closed_question('Would you like to save it?')
+                    if save:
+                        algo.save_automaton(standardized)
+                        print(f'{standardized["id"]} saved.')
+                        automata.append(standardized)
+            case 3:  # Determinize
+                selected_automaton = libr.choose_automaton(automata)
+                if dete.is_deterministic(selected_automaton):
+                    print("The automaton is deterministic!")
+                    if dete.is_complete(selected_automaton):
+                        print("The automaton is already complete!")
+                    else:
+                        completed_automaton = dete.completion(selected_automaton)
+                        print('Completed automaton:')
+                        algo.display_automaton(completed_automaton)
+                        save = libr.closed_question('Would you like to save it?')
+                        if save:
+                            algo.save_automaton(completed_automaton)
+                            print(f'{completed_automaton["id"]} saved.')
+                            automata.append(completed_automaton)
                 else:
-                    print("The automaton is not deterministic...")
+                    print("The automaton is not deterministic")
+                    determinized_automaton = dete.determinization_and_completion_automaton(selected_automaton)
+                    print('Determinized automaton:')
+                    algo.display_automaton(determinized_automaton)
 
-                if dete.is_complete(automata_dict):  # checking if complete
-                    print("The automaton is complete !")
-                else:
-                    print("The automaton is not complete...")
-                    print("Let's complete it !")
-                    dete.completion(automata_dict)
-
+                    save = libr.closed_question('Would you like to save it?')
+                    if save:
+                        algo.save_automaton(determinized_automaton)
+                        print(f'{determinized_automaton["id"]} saved.')
+                        automata.append(determinized_automaton)
+            case 4:  # Recognize
+                selected_automaton = libr.choose_automaton(automata)
+                word = input('Enter a word, or / to stop word recognition: ')
+                while word != '/':
+                    is_recogizned = recog.recognize_word(word, selected_automaton)
+                    print(f'The word {word} is recognized by automaton #{selected_automaton["id"]}'
+                          if is_recogizned else f'The word {word} is not recognized by automaton #{selected_automaton["id"]}')
+                    word = input('Enter a word, or / to stop word recognition: ')
     print('Good bye !')
+
+

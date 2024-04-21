@@ -1,5 +1,3 @@
-src/
-.idea
+src/automata/modified/  
+.idea/
 __pycache__/
-
-
