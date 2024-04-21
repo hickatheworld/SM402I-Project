@@ -9,13 +9,13 @@ def is_standard(automaton: dict) -> bool:
     """
     # Condition 1. A standard automaton has only one initial state.
     if len(automaton['initialStates']) != 1:
-        return False
+        return 'multiple_initial_states'
     initial_state = automaton['initialStates'][0]
     # Condition 2. A standard automaton can't have any transition arriving at that unique entry.
     for transition in automaton['transitions']:
         if transition['to'] == initial_state:
-            return False
-    return True
+            return 'transition_to_entry'
+    return 'standard'
 
 def standardize(automaton: dict) -> dict:
     """

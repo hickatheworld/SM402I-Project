@@ -4,15 +4,15 @@ def is_deterministic(automaton: dict) -> bool:
     """
     Checks if the automaton is deterministic.
     Args: The automaton to analyse
-    Returns: True if deterministic, False otherwise
+    Returns: string explaining why the automaton is not deterministic, or 'deterministic' if it is
     """
     # Checking for epsilon transitions
     for transition in automaton['transitions']:
         if transition['input'] == 'E':
-            return False
+            return 'async'
     # Check if there are more than one entry state
     if len(automaton["initialStates"]) > 1:
-        return False
+        return 'multiple_initial_states'
 
     # Checking for multiple transitions from the same state with the same labelled transition
     dico_transitions = {}
@@ -20,13 +20,13 @@ def is_deterministic(automaton: dict) -> bool:
         key = (transition['from'], transition['input'])
         if key in dico_transitions:
             # If the key already exists, then we have two outgoing labels from the same state, hence not deterministic
-            return False
+            return 'multiple_same_label_transitions'
         else:
             # Otherwise we add it to the transition dictionary
             dico_transitions[key] = transition['to']
 
     # All checks pass so the automaton is deterministic
-    return True
+    return 'deterministic'
 
 def is_complete(automaton: dict) -> bool:
     """

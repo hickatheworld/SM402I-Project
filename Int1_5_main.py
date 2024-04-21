@@ -29,9 +29,14 @@ if __name__ == "__main__":
                 algo.display_automaton(selected_automaton)
             case 2:  # Standardize
                 selected_automaton = libr.choose_automaton(automata)
-                if stan.is_standard(selected_automaton):
+                is_standard = stan.is_standard(selected_automaton)
+                if is_standard == 'standard':
                     print("The automaton is already standard!")
                 else:
+                    print('The automaton is not standard because', 
+                          'it has multiple initial states' 
+                          if is_standard == 'multiple_initial_states' 
+                          else 'it has a transition to the entry state')
                     standardized = stan.standardize(selected_automaton)
                     print('Standardized version:')
                     algo.display_automaton(standardized)
@@ -42,11 +47,13 @@ if __name__ == "__main__":
                         automata.append(standardized)
             case 3:  # Determinize
                 selected_automaton = libr.choose_automaton(automata)
-                if dete.is_deterministic(selected_automaton):
+                is_deter = dete.is_deterministic(selected_automaton)
+                if is_deter == 'deterministic':
                     print("The automaton is deterministic!")
                     if dete.is_complete(selected_automaton):
                         print("The automaton is already complete!")
                     else:
+                        print('There is not a transition for all letters of the alphabet in each state, hence the automaton is not complete.')
                         completed_automaton = dete.completion(selected_automaton)
                         print('Completed automaton:')
                         algo.display_automaton(completed_automaton)
@@ -56,7 +63,14 @@ if __name__ == "__main__":
                             print(f'{completed_automaton["id"]} saved.')
                             automata.append(completed_automaton)
                 else:
-                    print("The automaton is not deterministic")
+                    print('The automaton is not deterministic because',end=' ')
+                    match is_deter:
+                        case 'async':
+                            print('it has epsilon transitions.')
+                        case 'multiple_initial_states':
+                            print('it has multiple initial states.')
+                        case 'multiple_same_label_transitions':
+                            print('it has multiple transitions with the same label from the same state.')
                     determinized_automaton = dete.determinization_and_completion_automaton(selected_automaton)
                     print('Determinized automaton:')
                     algo.display_automaton(determinized_automaton)
