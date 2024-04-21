@@ -5,12 +5,13 @@ from src import Int1_5_lib as libr
 from src import Int1_5_standardization as stan
 from src import Int1_5_determinization as dete
 from src import Int1_5_recognition as recog
+from src import Int1_5_minimization as mini
 
 if __name__ == "__main__":
     libr.welcome_print()
     selected_automaton = None
     automata = json.load(open('src/automata/automata.json'))
-    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton',
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Minimize automaton',
                'Try and recognize words', 'Exit']
     selected_action = None
     # Menu starts
@@ -65,7 +66,12 @@ if __name__ == "__main__":
                         algo.save_automaton(determinized_automaton)
                         print(f'{determinized_automaton["id"]} saved.')
                         automata.append(determinized_automaton)
-            case 4:  # Recognize
+
+            case 4: # Minimize
+                selected_automaton = libr.choose_automaton(automata)
+                mini.display_minimal_automaton(*mini.minimization(selected_automaton))
+
+            case 5:  # Recognize
                 selected_automaton = libr.choose_automaton(automata)
                 word = input('Enter a word, or / to stop word recognition: ')
                 while word != '/':

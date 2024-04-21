@@ -1,5 +1,5 @@
-import Int1_5_algorithms as Algo
-import Int1_5_determinization as Det
+from src import Int1_5_algorithms as Algo
+from src import Int1_5_determinization as Det
 
 
 def display_partition(partition, step):
@@ -102,14 +102,13 @@ def minimization(cdfa: dict):
     """
         Minimizes the given automaton (that should already be a CDFA)
         Args : the CDFA
-        Returns : Already_Minimal (bool), mcdfa (dict), partition (list of sub-partitions)
+        Returns : Minimization_Possible (bool) Already_Minimal (bool), mcdfa (dict), partition (list of sub-partitions)
     """
     print("We have to minimize this automaton :")
     Algo.display_automaton(cdfa)
     # Check if the automaton is complete & cdfa
     if not(Det.is_deterministic(cdfa) and Det.is_complete(cdfa)):
-        print("The given automaton is not a CDFA, operation is impossible !")
-        return
+        return False, False, {}, []
 
     print("\n---STARTING MINIMIZATION---")
     step = -1
@@ -153,7 +152,7 @@ def minimization(cdfa: dict):
     # Verifying if the automaton was already
     if len(partition) == len(cdfa['states']):
         print(f"We have the same number of states, so, the automaton #{cdfa['id']} was already minimal !")
-        return True, cdfa, None
+        return True, True, cdfa, None
 
     # construct the new cdfa (create the dictionary that will be returned - using pattern of partition)
     mcdfa = {"id": cdfa["id"], "states":[chr(65+i) for i in range(len(partition))],
@@ -171,107 +170,17 @@ def minimization(cdfa: dict):
         for j in range(len(pattern_of_partition[i][0])):
             transition = {"from": chr(65+i), "input": mcdfa["alphabet"][j], "to": chr(65+pattern_of_partition[i][0][j])}
             mcdfa["transitions"].append(transition)
-    return False, mcdfa, partition
+    return True, False, mcdfa, partition
 
 
-def display_minimal_automaton(already_minimal: bool, mcdfa: dict, partition):
-    if already_minimal:
-        print("No changes is needed !: ")
-        Algo.display_automaton(mcdfa)
+def display_minimal_automaton(minimization_possible: bool, already_minimal: bool, mcdfa: dict, partition):
+    if not minimization_possible:
+        print("The given automaton is not a CDFA, operation is impossible !")
     else:
-        print("MINIMAL AUTOMATON: ")
-        display_partition(partition, "final")
-        Algo.display_automaton(mcdfa)
-
-
-"""
-    # TEST
-    automata = {
-            "id": "41",
-            "states": [
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5"
-            ],
-            "alphabet": [
-                "a",
-                "b"
-            ],
-            "transitions": [
-                {
-                    "from": "0",
-                    "input": "a",
-                    "to": "1"
-                },
-                {
-                    "from": "0",
-                    "input": "b",
-                    "to": "4"
-                },
-                {
-                    "from": "1",
-                    "input": "a",
-                    "to": "2"
-                },
-                {
-                    "from": "1",
-                    "input": "b",
-                    "to": "3"
-                },
-                {
-                    "from": "2",
-                    "input": "a",
-                    "to": "2"
-                },
-                {
-                    "from": "2",
-                    "input": "b",
-                    "to": "3"
-                },
-                {
-                    "from": "3",
-                    "input": "a",
-                    "to": "5"
-                },
-                {
-                    "from": "3",
-                    "input": "b",
-                    "to": "5"
-                },
-                {
-                    "from": "4",
-                    "input": "a",
-                    "to": "5"
-                },
-                {
-                    "from": "4",
-                    "input": "b",
-                    "to": "5"
-                },
-                {
-                    "from": "5",
-                    "input": "a",
-                    "to": "5"
-                },
-                {
-                    "from": "5",
-                    "input": "b",
-                    "to": "5"
-                }
-            ],
-            "initialStates": [
-                "0"
-            ],
-            "finalStates": [
-                "1",
-                "2",
-                "3",
-                "4"
-            ]
-        }
-    a, m, p = minimization(automata)
-    display_minimal_automaton(a, m,p)
-"""
+        if already_minimal:
+            print("No changes is needed !: ")
+            Algo.display_automaton(mcdfa)
+        else:
+            print("MINIMAL AUTOMATON: ")
+            display_partition(partition, "final")
+            Algo.display_automaton(mcdfa)
