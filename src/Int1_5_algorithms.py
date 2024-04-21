@@ -80,7 +80,7 @@ def display_automaton(automaton: dict):
         elif state in automaton["finalStates"]:
             print("\n", end="|{:^16}".format("<-"))
         else:
-            print("\n", end="|        ")
+            print("\n", end="|{:^16}".format(' '))
         # Second column of each line => display the state
         print(end="|{:^18}".format(state))
 
