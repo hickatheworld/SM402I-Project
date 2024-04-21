@@ -89,7 +89,12 @@ if __name__ == "__main__":
                 if dete.is_complete(selected_automaton) and dete.is_deterministic(selected_automaton):
                     result = mini.minimization(selected_automaton)
                     mini.display_minimal_automaton(*result)
-                else :
+                    save = libr.closed_question('Would you like to save it?')
+                    if save:
+                        algo.save_automaton(result[1])
+                        print(f'{result[1]["id"]} saved.')
+                        automata.append(result[1])
+                else:
                     print("Operation is impossible, we must determinize and complete first.")
                     cdfa = dete.determinization_and_completion_automaton(selected_automaton)
                     print("The cdfa is this :")

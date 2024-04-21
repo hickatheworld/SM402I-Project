@@ -150,7 +150,7 @@ def minimization(cdfa: dict) -> tuple:
         return True, True, cdfa, None
 
     # construct the new cdfa (create the dictionary that will be returned - using pattern of partition)
-    mcdfa = {"id": cdfa["id"]+"-MINIMIZED", "states":[chr(65+i) for i in range(len(partition))],
+    mcdfa = {"id": cdfa["id"]+"_MINIMIZED", "states":[chr(65+i) for i in range(len(partition))],
              "alphabet": cdfa["alphabet"],
              "initialStates": cdfa["initialStates"],
              "finalStates": [],
