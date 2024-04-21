@@ -59,7 +59,7 @@ def completion(automaton: dict) -> dict:
         language.append(transition['input'])
 
     # List for completed transitions
-    completed_transitions = automaton['transitions'].copy()
+    completed_transitions = automaton['transitions'][:]
 
     # Checking if all transition from each state are labelled with all symbols of the language (again)
     for state in automaton['states']:
@@ -77,77 +77,107 @@ def completion(automaton: dict) -> dict:
     if 'P' not in automaton['states']:
         automaton['states'].append('P')
 
+    # Creating the completed automaton name
+    automaton["id"] += "-COMPLETED"
+
     # Returning the completed automaton
     return {
-        id: f'{automaton["id"]}_completed',
-        'states': automaton['states'], 
-        'alphabet': automaton['alphabet'], 
-        'transitions': completed_transitions, 
-        'initialStates': automaton['initialStates'], 
+        'id': automaton["id"],
+        'states': automaton['states'],
+        'alphabet': automaton['alphabet'],
+        'transitions': completed_transitions,
+        'initialStates': automaton['initialStates'],
         'finalStates': automaton['finalStates']
         }
 
-
-
 def determinize(automaton: dict) -> dict:
     """
-    Determinizes an automaton
+    Determinizes an automaton 
+    ! Warning ! - only works with non determinzed automata
     Args : the automaton given as a dict
     Returns : the determinized automaton
     """
-    if is_deterministic(automaton):
-        return automaton
-    
+
+    # Reduce to only one initial state if necessary 
+    initialStates = automaton["initialStates"]
+    if len(initialStates) > 1:  
+        print("There is more than one initial state - Merging them...")   # Logging 
+        initialStates = associate_states_transitions(automaton, initialStates)
+
+        new_initial_statedict = create_composite_from_list_of_dicts(initialStates)  # is weird but this returns a dict
+        print("Done merging.")   # Logging
     else:
-        # Reduce to only one initial state if necessary 
-        initialStates = automaton["initialStates"]
-        if len(initialStates) > 1:  
-            print("There is more than one initial state - Merging them...")   # Logging 
-            new_initial_state = merge_states(automaton, initialStates)
-            print("Done merging.")   # Logging
-        else:
-            print("There is only one initial state. - No need to merge.") # Logging
-        
-        # Apply the determinazation algorithm
-        states_to_study = [new_initial_state]       # TODO: make sure initial_state here is dict[str, dict(str, str, str)]
+        initialStates = associate_states_transitions(automaton, initialStates)
+        new_initial_statedict = create_composite_from_list_of_dicts(initialStates)  # is weird but this returns a dict
+        print("There is only one initial state. - No need to merge.") # Logging
+    
+    # Apply the determinazation algorithm
+    states_to_study = [new_initial_statedict]
+    # We should write a function to copy automatons with parameters
 
-        # We should write a function to create automatons with parameters
-        DFA = {
-            "id" : automaton["id"] + '_determinized',
-            "states" : [new_initial_state],
-            "transitions" : [],  # empty for now
-            "initialStates" : [new_initial_state],
-            "finalStates" : []  # empty for now
-        }
+  
+    
+    DFA = {
+        "id" : automaton["id"]+"-DETERMINIZED",
+        "states" : [new_initial_statedict["state"]],
+        "alphabet" : automaton["alphabet"],
+        "transitions" : [],  # empty for now
+        "initialStates" : [new_initial_statedict["state"]],
+        "finalStates" : []  # empty for now
+    }
+    while states_to_study != []:
+        studying = states_to_study[0]
 
-        while states_to_study != []:
-            studying = states_to_study[0]
-            for symbol in automaton["alphabet"]:
-                arrival_states = find_arrival_states_by_symbol_from_state(studying["trans"], studying["state"], symbol)
-                new_state = create_composite_from_list_of_dicts(arrival_states)
+        for symbol in automaton["alphabet"]:
+            arrival_states = find_arrival_states_by_symbol_from_states(studying["composing_states"], studying["transitions"], symbol)
+            arrival_states = associate_states_transitions(automaton, arrival_states)
+            new_state = create_composite_from_list_of_dicts(arrival_states)
 
-                # This test can be factorized in : newstate not in (A union B)
-                if new_state not in states_to_study and new_state not in DFA["states"] :
-                        states_to_study.enqueue(new_state)
-                
-                # Update the DFA - add transitions
-                DFA["transitions"].append({"from":states_to_study[0]["state"], "input":symbol, "to":new_state["state"]})
-                
-                # Tweak the finalStates list
-                if states_to_study[0]["state"] not in DFA["finalStates"]:
-                    DFA["finalStates"].append(states_to_study[0]["state"])
-
-                if new_state not in DFA["states"]:
-                    DFA["states"].append(new_state["state"])
-
-            # Log it for debugging bruh
-            done_with = states_to_study.dequeue()
-            print(f"we done studying {done_with}. Still left : {states_to_study}")
+            # This test can be factorized in : newstate not in (A union B)
+            if new_state not in states_to_study and new_state["state"] not in DFA["states"]:
+                if new_state != "":
+                    states_to_study.append(new_state)
             
-        print("done with determinizing... oof !\n")
-        return DFA
+            # Update the DFA - add transitions
+            
+            DFA["transitions"].append({"from":states_to_study[0]["state"], "input":symbol, "to":new_state["state"]})
+            
+            # Tweak the finalStates list
+            if states_to_study[0]["state"] not in DFA["finalStates"] and composed_is_final(automaton, states_to_study[0]["state"]):
+                
+                DFA["finalStates"].append(states_to_study[0]["state"])
 
-def find_arrival_states_by_symbol_from_state(state, transition, symbol) -> List[dict[str, dict[str, str, str]]]:
+            # update the DFA - add states
+            if new_state["state"] not in DFA["states"]:
+                if new_state["state"] != "":
+                    DFA["states"].append(new_state["state"])
+        states_to_study.pop(0)
+        # print(f"we done studying {done_with}. Still left : {states_to_study}")
+        
+    print("done with determinizing... oof !\n")
+
+    return DFA
+
+
+def associate_states_transitions(automaton: dict, states: List[str]) -> List[dict]:
+    """
+    Create a list of dictionnaries matching states with their associated transitions
+
+    Args: The dictionnary containing all the info
+    Returns: The list of matching states-transitions
+    """
+    list_of_dict = []
+    for state in states:
+        dict_state = {"state": state}
+        dict_state["transitions"] = []
+        for transition in automaton["transitions"]:
+            if transition["from"] == state:
+                dict_state["transitions"].append(transition)
+        list_of_dict.append(dict_state)
+
+    return list_of_dict
+
+def find_arrival_states_by_symbol_from_states(states:List[str], transitions:List[dict], symbol: str) -> List[dict[str, dict[str, str, str]]]:
     """
     Find the arrival states by symbol from a given state in a transition table.
 
@@ -163,10 +193,16 @@ def find_arrival_states_by_symbol_from_state(state, transition, symbol) -> List[
             - 'symbol': The symbol that leads to the arrival state.
             - 'next_state': The next state after transitioning from the current state using the given symbol.
     """
-    
-    
-    
-    return
+    arrival_state = []
+    scanned = []
+    for state in states:
+        for transition in transitions:  
+            if transition["from"] == state:
+                if transition["input"] == symbol:
+                    if transition not in scanned:   # avoid infinite looping 
+                        scanned.append(transition)
+                        arrival_state.append(transition["to"])
+    return arrival_state
     
 def create_composite_from_list_of_dicts(states: List[dict[str, dict[str, str, str]]]) -> dict[str, dict[str, str, str]]:
     """
@@ -179,17 +215,36 @@ def create_composite_from_list_of_dicts(states: List[dict[str, dict[str, str, st
         dict[str, dict[str, str, str]]: A composite state and its transition table in the dictionnary form.
 
     """
-    # actually up there that function is just joining the str for the names and the dicts for the transi lol 
-    return None
+    composite_state = {
+        "state": "",
+        "transitions": [],
+        "composing_states" : []
+    }
+    
+    for state in states:
+        if not state["state"] in composite_state["state"]:
+            composite_state["state"] += "." + state["state"]
+        composite_state["composing_states"].append(state["state"])
+        for transition in state["transitions"]:
+            composite_state["transitions"].append(transition)
+
+    # remove trailing "." that may have slipped in the new composite state name
+    composite_state["state"] = composite_state["state"].strip(".")
+    
+    return composite_state
 
 
-def merge_states(original_automaton: dict,  states_to_merge: List[str]):
-    """
-        Merges the states in a given list
-        Args: The automaton to determinize & the states to merge
-        Returns: The dictionary with the merged_states & list of new_transitions
-    """
-    merged_states = states_to_merge
+
+def composed_is_final(automaton:dict, composite_state: str) -> bool:
+
+    list_of_states_composing = composite_state.split(".")
+    
+    
+    for state in list_of_states_composing:
+        if state in automaton["finalStates"]:
+            return True
+
+    return False
 
 
 def determinization_and_completion_automaton(automaton: dict) ->dict:
@@ -200,9 +255,10 @@ def determinization_and_completion_automaton(automaton: dict) ->dict:
     """
     # Calling the completion function upon the automaton
     completed = completion(automaton)
+
     # Calling the determinize function over that same completed automaton
     determinized = determinize(completed)
-
+    
     return determinized
 
 
