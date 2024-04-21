@@ -1,6 +1,5 @@
-# Consider that the given automaton is already CDFA
-# THAT MEANS THAT EACH STATE HAS ONLY ONE DESTINATION PER LETTER
 import Int1_5_algorithms as Algo
+import Int1_5_determinization as Det
 
 
 def display_partition(partition, step):
@@ -39,35 +38,6 @@ def detect_pattern(partition: list, index_sub_partition: int, automaton: dict):
         # pattern_of_subset will have the sublists of the pattern of each state
         pattern_of_subset.append(pattern_of_state)
     return pattern_of_subset
-
-
-'''
-def detect_pattern(partition: list, index: int, a: dict):
-    """
-    Detects the patterns of destination states in one subset of the partition.
-    """
-    pattern_of_subset = []
-    letters = a['alphabet']
-
-    for state in partition[index]:
-        pattern_of_state = []
-
-        for letter in letters:
-            # Find transitions from the current state with the current letter
-            dest = [t['to'] for t in a['transitions'] if t['from'] == state and t['input'] == letter]
-
-            # Find the index of the sublist in which the destination state belongs
-            dest_index = [k for k, sublist in enumerate(partition) if dest[0] in sublist]
-
-            if dest_index:
-                pattern_of_state.append(dest_index[0])  # Append the index if found
-            else:
-                pattern_of_state.append(None)  # Append None if destination state not found
-
-        pattern_of_subset.append(pattern_of_state)
-
-    return pattern_of_subset
-'''
 
 
 def display_transitions(partition: list, automaton: dict, pattern_of_partition: list, step: int):
@@ -137,7 +107,7 @@ def minimization(cdfa: dict):
     print("We have to minimize this automaton :")
     Algo.display_automaton(cdfa)
     # Check if the automaton is complete & cdfa
-    if len(cdfa['transitions']) != (len(cdfa['states'])*len(cdfa['alphabet'])):
+    if not(Det.is_deterministic(cdfa) and Det.is_complete(cdfa)):
         print("The given automaton is not a CDFA, operation is impossible !")
         return
 
@@ -180,9 +150,7 @@ def minimization(cdfa: dict):
         partition_state = temp_partition_state
         pattern_of_partition = temp_pattern_of_partition
 
-    print("Pattern of partition is : ", pattern_of_partition)
-
-    # Verifying if the automaton was already minimal
+    # Verifying if the automaton was already
     if len(partition) == len(cdfa['states']):
         print(f"We have the same number of states, so, the automaton #{cdfa['id']} was already minimal !")
         return True, cdfa, None
@@ -198,9 +166,9 @@ def minimization(cdfa: dict):
         for j in range(len(partition[i])):
             if partition[i][j] in cdfa["finalStates"] and chr(65+i) not in mcdfa["finalStates"]:
                 mcdfa["finalStates"].append(chr(65+i))
-    # must define all the transitions (using pattern_of_partition ?)
+    # must define all the transitions
     for i in range(len(pattern_of_partition)):
-        for j in range(len(pattern_of_partition[i])):
+        for j in range(len(pattern_of_partition[i][0])):
             transition = {"from": chr(65+i), "input": mcdfa["alphabet"][j], "to": chr(65+pattern_of_partition[i][0][j])}
             mcdfa["transitions"].append(transition)
     return False, mcdfa, partition
@@ -215,22 +183,95 @@ def display_minimal_automaton(already_minimal: bool, mcdfa: dict, partition):
         display_partition(partition, "final")
         Algo.display_automaton(mcdfa)
 
-'''
-# TEST
-automata = {'id': '16', 'states': ['1', '2', '3', '4', '5', '6'], 'alphabet': ['a', 'b', 'c', 'd'],
-            'transitions': [{'from': '1', 'input': 'a', 'to': '2'}, {'from': '1', 'input': 'b', 'to': '6'},
-                            {'from': '1', 'input': 'c', 'to': '6'}, {'from': '1', 'input': 'd', 'to': '6'},
-                            {'from': '2', 'input': 'a', 'to': '2'}, {'from': '2', 'input': 'b', 'to': '3'},
-                            {'from': '2', 'input': 'c', 'to': '6'}, {'from': '2', 'input': 'd', 'to': '6'},
-                            {'from': '3', 'input': 'a', 'to': '6'}, {'from': '3', 'input': 'b', 'to': '3'},
-                            {'from': '3', 'input': 'c', 'to': '4'}, {'from': '3', 'input': 'd', 'to': '6'},
-                            {'from': '4', 'input': 'a', 'to': '6'}, {'from': '4', 'input': 'b', 'to': '6'},
-                            {'from': '4', 'input': 'c', 'to': '4'}, {'from': '4', 'input': 'd', 'to': '5'},
-                            {'from': '5', 'input': 'a', 'to': '6'}, {'from': '5', 'input': 'b', 'to': '6'},
-                            {'from': '5', 'input': 'c', 'to': '6'}, {'from': '5', 'input': 'd', 'to': '5'},
-                            {'from': '6', 'input': 'a', 'to': '6'}, {'from': '6', 'input': 'b', 'to': '6'},
-                            {'from': '6', 'input': 'c', 'to': '6'}, {'from': '6', 'input': 'd', 'to': '6'}],
-            'initialStates': ['1'], 'finalStates': ['5']}
-a, m, p = minimization(automata)
-display_minimal_automaton(a, m,p)
-'''
+
+"""
+    # TEST
+    automata = {
+            "id": "41",
+            "states": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+            ],
+            "alphabet": [
+                "a",
+                "b"
+            ],
+            "transitions": [
+                {
+                    "from": "0",
+                    "input": "a",
+                    "to": "1"
+                },
+                {
+                    "from": "0",
+                    "input": "b",
+                    "to": "4"
+                },
+                {
+                    "from": "1",
+                    "input": "a",
+                    "to": "2"
+                },
+                {
+                    "from": "1",
+                    "input": "b",
+                    "to": "3"
+                },
+                {
+                    "from": "2",
+                    "input": "a",
+                    "to": "2"
+                },
+                {
+                    "from": "2",
+                    "input": "b",
+                    "to": "3"
+                },
+                {
+                    "from": "3",
+                    "input": "a",
+                    "to": "5"
+                },
+                {
+                    "from": "3",
+                    "input": "b",
+                    "to": "5"
+                },
+                {
+                    "from": "4",
+                    "input": "a",
+                    "to": "5"
+                },
+                {
+                    "from": "4",
+                    "input": "b",
+                    "to": "5"
+                },
+                {
+                    "from": "5",
+                    "input": "a",
+                    "to": "5"
+                },
+                {
+                    "from": "5",
+                    "input": "b",
+                    "to": "5"
+                }
+            ],
+            "initialStates": [
+                "0"
+            ],
+            "finalStates": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ]
+        }
+    a, m, p = minimization(automata)
+    display_minimal_automaton(a, m,p)
+"""
