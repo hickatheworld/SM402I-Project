@@ -4,11 +4,10 @@ import json
 
 def get_automaton_by_id(automaton_id: int, filename: str):
     """
-    Parses the automata data into a text file according to the ID given by the user.
-    Args:
-        ID : The id of the automaton filepath: Path of the file to parse.
-    Returns:
-        A dictionary for the automata which's ID was given
+        Args:
+            ID : The id of the automaton filepath: Path of the file to parse.
+        Returns:
+            A dictionary for the automata whose ID was given
     """
     with open(filename, "r") as file:
         data = json.load(file)
@@ -86,7 +85,7 @@ def display_automaton(automaton: dict):
         print(end="|{:^10}".format(state))
 
         # Other columns of each line => destination states by each letter
-        for letter in letters :
+        for letter in letters:
             # list_dest will consider all transitions from given state with given input, but it only takes the DESTINATIONS
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
             # If there is no destination then "--"
@@ -98,7 +97,7 @@ def display_automaton(automaton: dict):
                 i = 1
                 while i<len(list_dest) :
                     str_dest += f",{list_dest[i]}"
-                    i +=1
+                    i += 1
                 print(end="|{:^10}".format(str_dest))
         print("|", end="")
     print("\n")
