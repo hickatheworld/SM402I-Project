@@ -70,12 +70,16 @@ if __name__ == "__main__":
             case 4: # Minimize
                 selected_automaton = libr.choose_automaton(automata)
                 result = None
+                print("We need to minimize this : ")
+                algo.display_automaton(selected_automaton)
                 if dete.is_complete(selected_automaton) and dete.is_deterministic(selected_automaton):
                     result = mini.minimization(selected_automaton)
                     mini.display_minimal_automaton(*result)
                 else :
                     print("Operation is impossible, we must determinize and complete first.")
                     cdfa = dete.determinization_and_completion_automaton(selected_automaton)
+                    print("The cdfa is this :")
+                    algo.display_automaton(cdfa)
                     result = mini.minimization(cdfa)
                     mini.display_minimal_automaton(*result)
                 if not result[0]: # If the automaton was not already minimal
@@ -83,7 +87,7 @@ if __name__ == "__main__":
                     if save:
                         algo.save_automaton(result[1])
                         print(f'{result[1]["id"]} saved.')
-                        automata.append(result[1]) 
+                        automata.append(result[1])
 
             case 5:  # Recognize
                 selected_automaton = libr.choose_automaton(automata)

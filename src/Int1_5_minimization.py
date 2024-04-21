@@ -21,7 +21,7 @@ def detect_pattern(partition: list, index_sub_partition: int, automaton: dict):
     """
         Detects the patterns of the destinations in ONE SUBSET of the partition
         Args : The partition, the index of the considered sub-partition, the original automaton
-        Returns : A list of sublists which are the patterns of each sub-partitions e.g. [[1,0,2], [0,0,2]]
+        Returns : A list of sublists which are the patterns of each sub-partitions e.g. [[1,0,2], [[0,0,2], [0,0,2]]]
     """
     pattern_of_subset = []
     letters = automaton['alphabet']
@@ -106,10 +106,13 @@ def minimization(cdfa: dict) -> tuple:
     """
     step = -1
     partition = [cdfa['finalStates'], [state for state in cdfa['states'] if state not in cdfa['finalStates']]]
+    if not partition[0] or not partition[1] :
+        return False, False, cdfa, partition
     partition_state = [False, False]
-    pattern_of_partition = []
+
     # while there are sub-partitions to analyze, we do all the things below
     while False in partition_state:
+        pattern_of_partition = []
         step += 1
         # First of all - display the partition
         # Must detect the pattern in partition in order to display the table transition before analysing them
@@ -144,14 +147,19 @@ def minimization(cdfa: dict) -> tuple:
 
     # Verifying if the automaton was already
     if len(partition) == len(cdfa['states']):
-        return True, cdfa, None
+        return True, True, cdfa, None
 
     # construct the new cdfa (create the dictionary that will be returned - using pattern of partition)
-    mcdfa = {"id": cdfa["id"] + '_MINIMIZED', "states":[chr(65+i) for i in range(len(partition))],
+    mcdfa = {"id": cdfa["id"]+"-MINIMIZED", "states":[chr(65+i) for i in range(len(partition))],
              "alphabet": cdfa["alphabet"],
              "initialStates": cdfa["initialStates"],
              "finalStates": [],
              "transitions": []}
+    # must define the initial state of mcdfa
+    for i in range(len(partition)):
+        for j in range(len(partition[i])):
+            if partition[i][j] in cdfa["initialStates"]:
+                mcdfa["initialStates"].append(chr(65+i))
     # must define the final states of mcdfa
     for i in range(len(partition)):
         for j in range(len(partition[i])):
@@ -162,13 +170,16 @@ def minimization(cdfa: dict) -> tuple:
         for j in range(len(pattern_of_partition[i][0])):
             transition = {"from": chr(65+i), "input": mcdfa["alphabet"][j], "to": chr(65+pattern_of_partition[i][0][j])}
             mcdfa["transitions"].append(transition)
-    return False, mcdfa, partition
+    return True, False, mcdfa, partition
 
 
-def display_minimal_automaton(already_minimal: bool, mcdfa: dict, partition):
-    if already_minimal:
-        print("The automaton is already minimal.")
-    else:
-        print("Minimized automaton:")
-        display_partition(partition, "final")
-        Algo.display_automaton(mcdfa)
+def display_minimal_automaton(possibility: bool, already_minimal: bool, mcdfa: dict, partition):
+    if possibility :
+        if already_minimal:
+            print("The automaton is already minimal.")
+        else:
+            print("Minimized automaton:")
+            display_partition(partition, "final")
+            Algo.display_automaton(mcdfa)
+    else :
+        print("It's impossible to minimize because we only have one subset in the partition !")
