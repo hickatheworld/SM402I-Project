@@ -67,8 +67,12 @@ if __name__ == "__main__":
                         automata.append(determinized_automaton)
             case 4: # Recognize
                 selected_automaton = libr.choose_automaton(automata)
-                recog.is_word_recognise(selected_automaton)
-
+                word = input('Enter a word, or / to stop word recognition: ')
+                while word != '/':
+                    is_recogizned = recog.recognize_word(word, selected_automaton)
+                    print(f'The word {word} is recognized by automaton #{selected_automaton["id"]}'
+                          if is_recogizned else f'The word {word} is not recognized by automaton #{selected_automaton["id"]}')
+                    word = input('Enter a word, or / to stop word recognition: ')
     print('Good bye !')
 
     

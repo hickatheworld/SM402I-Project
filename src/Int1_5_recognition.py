@@ -1,12 +1,12 @@
 
-def recognize_word(word: str, automaton: dict):
+def recognize_word(word: str, automaton: dict) -> bool:
     """
-    Tests if a word is in the automaton.
+    Tests if a word is recognized by the given automaton.
     Args:
         word: the requested word which we want to compare to the automaton's language
         automaton: the automaton we want to compare the language of to the given word
     Returns:
-        nothing
+        Whether the word is recognized by the automaton
     """
     current_state = automaton['initialStates'][0]
     # Iterate through each letter in the word
@@ -22,26 +22,7 @@ def recognize_word(word: str, automaton: dict):
                 break
         # If no transition is found for the current letter then the word doesn't exist in the automaton
         if next_state is None:
-            print(f"Word {word} is not recognized by the automaton.")
-            return
+            return False
         current_state = next_state
-    # If the last state is a final state then the word is recognized, else not
-    if current_state in automaton['finalStates']:
-        print(f"Word {word} is recognized by the automaton.")
-    else:
-        print(f"Word {word} is not recognized by the automaton.")
-
-def is_word_recognise(automaton: dict):
-    """
-    Loop to test if multiples words are in the automaton
-    Args:
-        automaton: the automaton to analyse
-    Returns:
-        nothing
-    """
-    word = input("Enter a word to recognise, type / to stop the algorithm: ")
-    # Continue looping until the user types '/'
-    while word != "/":
-        # Call the function to recognize the entered word to compare to the automaton
-        recognize_word(word, automaton)
-        word = input("Enter a word to recognise: ")
+    # If the last state is a final state then the word is recognized
+    return current_state in automaton['finalStates']
