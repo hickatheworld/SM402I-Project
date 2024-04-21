@@ -8,21 +8,47 @@ def recognize_word(word: str, automaton: dict) -> bool:
     Returns:
         Whether the word is recognized by the automaton
     """
-    current_state = automaton['initialStates'][0]
+    current_states = set(automaton['initialStates'])
+    # Add states reachable through epsilon transitions from initial states
+    current_states |= epsilon_closure(current_states, automaton['transitions'])
+
     # Iterate through each letter in the word
     for letter in word:
-        next_state = None
+        next_states = set()
         # Iterate through each transition in the automaton's transitions
         for transition in automaton['transitions']:
-            # Checking if the transition's 'from' state matches the current state AND if the transition's input matches the current letter
-            if transition['from'] == current_state and transition['input'] == letter:
-                # If the conditions are met we update the next state to the 'to' state of the current transition
-                next_state = transition['to']
-                # We exit the loop
-                break
+            # Checking if the transition's 'from' state is in current states AND if the transition's input matches the current letter
+            if transition['from'] in current_states and transition['input'] == letter:
+                # If the conditions are met we add the 'to' state of the current transition to next states
+                next_states.add(transition['to'])
+        # Add states reachable through epsilon transitions from next states
+        next_states |= epsilon_closure(next_states, automaton['transitions'])
         # If no transition is found for the current letter then the word doesn't exist in the automaton
-        if next_state is None:
+        if not next_states:
             return False
-        current_state = next_state
-    # If the last state is a final state then the word is recognized
-    return current_state in automaton['finalStates']
+        current_states = next_states
+    # If any of the last states is a final state then the word is recognized
+    return any(state in automaton['finalStates'] for state in current_states)
+
+def epsilon_closure(states: set, transitions: list) -> set:
+    """
+    Returns the epsilon closure of a set of states.
+    Args:
+        states: the set of states for which to find the epsilon closure
+        transitions: the list of transitions of the automaton
+    Returns:
+        The epsilon closure of the set of states
+    """
+    # Start with the initial set of states
+    closure = set(states)
+    # Keep looping until no new states can be added to the closure
+    while True:
+        # Find all states that can be reached from the current closure through an epsilon transition
+        new_states = set(state['to'] for state in transitions if state['from'] in closure and state['input'] == 'E')
+        # Add these new states to the closure
+        new_states |= closure
+        # If no new states were added in this iteration, we have found the complete epsilon closure
+        if closure == new_states:
+            return closure
+        # Otherwise, continue with the new closure in the next iteration
+        closure = new_states
