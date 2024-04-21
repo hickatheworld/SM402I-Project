@@ -70,6 +70,3 @@ if __name__ == "__main__":
                 recog.is_word_recognise(selected_automaton)
 
     print('Good bye !')
-
-    
-        
