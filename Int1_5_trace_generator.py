@@ -28,7 +28,7 @@ for id in ids:
 		+ 'aab\n'\
 		+ '\n'\
 		+ '/\n'\
-		+ '6\n'
+		+ '7\n'
 		# To generate the trace automatically, we simply run the program in a child process, 
   		# redirecting stdout (standard output, that is everything which would get displayed on the screen) to our trace file
 		proc = subprocess.Popen(['python', 'Int1_5_main.py'], stdin=subprocess.PIPE, stdout=f, text=True)
