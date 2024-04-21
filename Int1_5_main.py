@@ -91,9 +91,9 @@ if __name__ == "__main__":
                     mini.display_minimal_automaton(*result)
                     save = libr.closed_question('Would you like to save it?')
                     if save:
-                        algo.save_automaton(result[1])
-                        print(f'{result[1]["id"]} saved.')
-                        automata.append(result[1])
+                        algo.save_automaton(result[2])
+                        print(f'{result[2]["id"]} saved.')
+                        automata.append(result[2])
                 else:
                     print("Operation is impossible, we must determinize and complete first.")
                     cdfa = dete.determinization_and_completion_automaton(selected_automaton)
@@ -101,12 +101,12 @@ if __name__ == "__main__":
                     algo.display_automaton(cdfa)
                     result = mini.minimization(cdfa)
                     mini.display_minimal_automaton(*result)
-                if result[0]: # If the automaton was not already minimal
-                    save = libr.closed_question('Would you like to save it?')
-                    if save:
-                        algo.save_automaton(result[1])
-                        print(f'{result[1]["id"]} saved.')
-                        automata.append(result[1])
+                    if result[0]: # If the automaton was not already minimal
+                        save = libr.closed_question('Would you like to save it?')
+                        if save:
+                            algo.save_automaton(result[1])
+                            print(f'{result[1]["id"]} saved.')
+                            automata.append(result[1])
 
             case 5:  # Recognize
                 selected_automaton = libr.choose_automaton(automata)
