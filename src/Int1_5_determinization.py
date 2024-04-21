@@ -215,6 +215,7 @@ def determinize_async(automaton: dict) -> dict:
     dfa['finalStates'] = [state for state in composite_states if any(any(e in automaton['finalStates'] for e in eclosures[s]) for s in state)]
     # Now, we have to convert composite states to strings in initialStates, finalStates, states and transitions
     dfa['initialStates'] = ['.'.join(eclosures[dfa['initialStates'][0]])]
+    # Each loop simply concatenates the epsilon closures of the states in the composite state to a single string
     for i in range(len(dfa['states'])):
         states = []
         composite = dfa['states'][i]
@@ -237,7 +238,6 @@ def determinize_async(automaton: dict) -> dict:
         for s in transition['to']:
             to_states+= eclosures[s]
         transition['to'] = '.'.join(sorted(list(set(to_states))))
-    print(dfa)
     return dfa
 
 
