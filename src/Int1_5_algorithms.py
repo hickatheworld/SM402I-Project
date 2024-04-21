@@ -64,25 +64,25 @@ def display_automaton(automaton: dict):
         letters = automaton["alphabet"]
 
     #                                    DISPLAYING HEADER LINE                                       #
-    print(end="|{:^8}".format(""))
-    print(end="|{:^10}".format(""))
+    print(end="|{:^16}".format(""))
+    print(end="|{:^18}".format(""))
     for letter in letters:
-        print(end="|{:^10}".format(letter))
+        print(end="|{:^18}".format(letter))
     print(end="|")
 
     # DISPLAYING TABLE BODY
     for state in automaton["states"]:
         # First column of each line => is the state an entry//terminal state ?
         if state in automaton["initialStates"] and state in automaton["finalStates"]:
-            print("\n", end="|{:^8}".format("<->"))
+            print("\n", end="|{:^16}".format("<->"))
         elif state in automaton["initialStates"]:
-            print("\n", end="|{:^8}".format("->"))
+            print("\n", end="|{:^16}".format("->"))
         elif state in automaton["finalStates"]:
-            print("\n", end="|{:^8}".format("<-"))
+            print("\n", end="|{:^16}".format("<-"))
         else:
             print("\n", end="|        ")
         # Second column of each line => display the state
-        print(end="|{:^10}".format(state))
+        print(end="|{:^18}".format(state))
 
         # Other columns of each line => destination states by each letter
         for letter in letters:
@@ -90,7 +90,7 @@ def display_automaton(automaton: dict):
             list_dest = [transition['to'] for transition in automaton['transitions'] if transition['from'] == state and transition['input'] == letter]
             # If there is no destination then "--"
             if not list_dest:
-                print(end="|{:^10}".format("--"))
+                print(end="|{:^18}".format("--"))
             # Else we create the string such as 0,1,2 (it won't necessarily be in ascending order)
             else:
                 str_dest = list_dest[0]
@@ -98,7 +98,7 @@ def display_automaton(automaton: dict):
                 while i<len(list_dest) :
                     str_dest += f",{list_dest[i]}"
                     i += 1
-                print(end="|{:^10}".format(str_dest))
+                print(end="|{:^18}".format(str_dest))
         print("|", end="")
     print("\n")
 
