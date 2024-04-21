@@ -106,9 +106,6 @@ def minimization(cdfa: dict):
     """
     print("We have to minimize this automaton :")
     Algo.display_automaton(cdfa)
-    # Check if the automaton is complete & cdfa
-    if not(Det.is_deterministic(cdfa) and Det.is_complete(cdfa)):
-        return False, False, {}, []
 
     print("\n---STARTING MINIMIZATION---")
     step = -1
@@ -152,7 +149,7 @@ def minimization(cdfa: dict):
     # Verifying if the automaton was already
     if len(partition) == len(cdfa['states']):
         print(f"We have the same number of states, so, the automaton #{cdfa['id']} was already minimal !")
-        return True, True, cdfa, None
+        return True, cdfa, None
 
     # construct the new cdfa (create the dictionary that will be returned - using pattern of partition)
     mcdfa = {"id": cdfa["id"], "states":[chr(65+i) for i in range(len(partition))],
@@ -170,17 +167,14 @@ def minimization(cdfa: dict):
         for j in range(len(pattern_of_partition[i][0])):
             transition = {"from": chr(65+i), "input": mcdfa["alphabet"][j], "to": chr(65+pattern_of_partition[i][0][j])}
             mcdfa["transitions"].append(transition)
-    return True, False, mcdfa, partition
+    return False, mcdfa, partition
 
 
-def display_minimal_automaton(minimization_possible: bool, already_minimal: bool, mcdfa: dict, partition):
-    if not minimization_possible:
-        print("The given automaton is not a CDFA, operation is impossible !")
+def display_minimal_automaton(already_minimal: bool, mcdfa: dict, partition):
+    if already_minimal:
+        print("No changes is needed !: ")
+        Algo.display_automaton(mcdfa)
     else:
-        if already_minimal:
-            print("No changes is needed !: ")
-            Algo.display_automaton(mcdfa)
-        else:
-            print("MINIMAL AUTOMATON: ")
-            display_partition(partition, "final")
-            Algo.display_automaton(mcdfa)
+        print("MINIMAL AUTOMATON: ")
+        display_partition(partition, "final")
+        Algo.display_automaton(mcdfa)
