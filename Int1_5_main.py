@@ -9,7 +9,7 @@ if __name__ == "__main__":
     libr.welcome_print()
     selected_automaton = None
     automata = json.load(open('src/automata/automata.json'))
-    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize automaton', 'Exit']
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Exit']
     selected_action = None
     # Menu starts
     while selected_action != 4:
@@ -57,7 +57,9 @@ if __name__ == "__main__":
                     determinized_automaton = dete.determinization_and_completion_automaton(selected_automaton)
                     print('Determinized automaton:')
                     algo.display_automaton(determinized_automaton)
-                    save = algo.closed_question('Would you like to save it?')
+
+
+                    save = libr.closed_question('Would you like to save it?')
                     if save:
                         algo.save_automaton(determinized_automaton)
                         print(f'{determinized_automaton["id"]} saved.')

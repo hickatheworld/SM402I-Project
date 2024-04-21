@@ -9,25 +9,18 @@ def is_deterministic(automaton: dict) -> bool:
     # Check if there are more than one entry state
     if len(automaton["initialStates"]) > 1:
         return False
-    # Check if there are more than one entry state
-    if len(automaton["initialStates"]) > 1:
-        return False
 
-    # Checking for multiple transitions from the same state with the same labelled transition
     # Checking for multiple transitions from the same state with the same labelled transition
     dico_transitions = {}
     for transition in automaton['transitions']:
         key = (transition['from'], transition['input'])
         if key in dico_transitions:
             # If the key already exists, then we have two outgoing labels from the same state, hence not deterministic
-            # If the key already exists, then we have two outgoing labels from the same state, hence not deterministic
             return False
         else:
             # Otherwise we add it to the transition dictionary
-            # Otherwise we add it to the transition dictionary
             dico_transitions[key] = transition['to']
 
-    # All checks pass so the automaton is deterministic
     # All checks pass so the automaton is deterministic
     return True
 
@@ -42,7 +35,6 @@ def is_complete(automaton: dict) -> bool:
         language.append(transition['input'])
 
     # Checking if all transition from each state are labelled with all symbols of the language
-    # Checking if all transition from each state are labelled with all symbols of the language
     for state in automaton['states']:
         for symbol in language:
             found = False
@@ -53,7 +45,6 @@ def is_complete(automaton: dict) -> bool:
             if not found:
                 return False
 
-    # All checks pass so the automaton is complete
     # All checks pass so the automaton is complete
     return True
 
@@ -71,7 +62,6 @@ def completion(automaton: dict) -> dict:
     completed_transitions = automaton['transitions'][:]
 
     # Checking if all transition from each state are labelled with all symbols of the language (again)
-    # Checking if all transition from each state are labelled with all symbols of the language (again)
     for state in automaton['states']:
         for symbol in language:
             found = False
@@ -81,16 +71,24 @@ def completion(automaton: dict) -> dict:
                     break
             if not found:
                 # If a transition is not found for a symbol, we add it to a bin state we denote 'P'
-                # If a transition is not found for a symbol, we add it to a bin state we denote 'P'
                 completed_transitions.append({'from': state, 'to': 'P', 'input': symbol})
 
-    # Adding the bin state if it doesn't exist
     # Adding the bin state if it doesn't exist
     if 'P' not in automaton['states']:
         automaton['states'].append('P')
 
+    # Creating the completed automaton name
+    automaton["id"] += "-COMPLETED"
+
     # Returning the completed automaton
-    return {'states': automaton['states'], 'alphabet': automaton['alphabet'], 'transitions': completed_transitions, 'initialStates': automaton['initialStates'], 'finalStates': automaton['finalStates']}
+    return {
+        'id': automaton["id"],
+        'states': automaton['states'],
+        'alphabet': automaton['alphabet'],
+        'transitions': completed_transitions,
+        'initialStates': automaton['initialStates'],
+        'finalStates': automaton['finalStates']
+        }
 
 def determinize(automaton: dict) -> dict:
     """
@@ -114,7 +112,7 @@ def determinize(automaton: dict) -> dict:
         print("There is only one initial state. - No need to merge.") # Logging
     
     # Apply the determinazation algorithm
-    states_to_study = [new_initial_statedict]       # TODO: make sure initial_state here is dict[str, dict(str, str, str)]
+    states_to_study = [new_initial_statedict]
     # We should write a function to copy automatons with parameters
 
   
@@ -257,31 +255,11 @@ def determinization_and_completion_automaton(automaton: dict) ->dict:
     """
     # Calling the completion function upon the automaton
     completed = completion(automaton)
+
     # Calling the determinize function over that same completed automaton
     determinized = determinize(completed)
+    
     return determinized
 
 
 
-# TODO : Remove this testing part
-if __name__ == "__main__":
-
-    from Int1_5_algorithms import get_automaton_by_id
-    from Int1_5_algorithms import display_automaton
-
-
-
-
-    for i in range(1, 45):
-    # for i in range(29, 30):
-        myautomaton = get_automaton_by_id(str(i), "src/automata/automatas.json")
-        print(f"i : {i}-", is_deterministic(myautomaton))
-
-        if not is_deterministic(myautomaton):
-            if i == 29:
-                import json
-                with open("temp.txt", 'w') as tmpfile1:
-                    tmpfile1.write(json.dumps(determinize(myautomaton), separators=(",", ":"), indent=4))
-
-
-            display_automaton(determinize(myautomaton))
