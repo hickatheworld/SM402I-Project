@@ -10,7 +10,7 @@ if __name__ == "__main__":
     libr.welcome_print()
     selected_automaton = None
     automata = json.load(open('src/automata/automata.json'))
-    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Try and recognize words', 'Exit']
+    actions = ['List automata', 'Display automaton', 'Standardize automaton', 'Determinize and complete automaton', 'Recognize words', 'Exit']
     selected_action = None
     # Menu starts
     while selected_action != len(actions)-1: 
