@@ -237,10 +237,17 @@ def composed_is_final(automaton:dict, composite_state: str) -> bool:
     return False
 
 
-
-
-
-
+def determinization_and_completion_automaton(automaton: dict) ->dict:
+    """
+    Merges the completion and determinize funtions into one
+    Args: The undeterministic and uncomplete automaton
+    Returns: The deterministic and complete automaton
+    """
+    # Calling the completion function upon the automaton
+    completed = completion(automaton)
+    # Calling the determinize function over that same completed automaton
+    determinized = determinize(completed)
+    return determinized
 
 
 
@@ -266,21 +273,3 @@ if __name__ == "__main__":
 
 
             display_automaton(determinize(myautomaton))
-
-
-
-
-def determinization_and_completion_automaton(automaton: dict) ->dict:
-    """
-    Merges the completion and determinize funtions into one
-    Args: The undeterministic and uncomplete automaton
-    Returns: The deterministic and complete automaton
-    """
-    # Calling the completion function upon the automaton
-    completed = completion(automaton)
-    # Calling the determinize function over that same completed automaton
-    determinized = determinize(completed)
-
-    return determinized
-
-# def display_complete_dererministic_automaton(CDFA):       # TODO : implement this

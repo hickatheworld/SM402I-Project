@@ -55,7 +55,6 @@ if __name__ == "__main__":
                     print("Let's complete and determinize it...")
                     determinized_automata = dete.determinization_and_completion_automaton(automata_dict)
                     print("We are now dealing with a complete deterministic finite automaton !")
-                # display_complete_dererministic_automaton(CDFA)
 
 
 
