@@ -6,6 +6,10 @@ def is_deterministic(automaton: dict) -> bool:
     Args: The automaton to analyse
     Returns: True if deterministic, False otherwise
     """
+    # Checking for epsilon transitions
+    for transition in automaton['transitions']:
+        if transition['input'] == 'E':
+            return False
     # Check if there are more than one entry state
     if len(automaton["initialStates"]) > 1:
         return False
@@ -97,9 +101,8 @@ def completion(automaton: dict) -> dict:
 def determinize(automaton: dict) -> dict:
     """
     Determinizes an automaton 
-    ! Warning ! - only works with non determinzed automata
-    Args : the automaton given as a dict
-    Returns : the determinized automaton
+    Args: the automaton given as a dict
+    Returns: the determinized automaton
     """
 
     # Reduce to only one initial state if necessary 
@@ -161,6 +164,81 @@ def determinize(automaton: dict) -> dict:
     print("done with determinizing... oof !\n")
 
     return DFA
+
+def determinize_async(automaton: dict) -> dict:
+    """
+    Determinizes an asynchronous automaton, using epsilon closures.
+    Args: The automaton to determinize
+    Returns: The determinized automaton
+    """
+    eclosures = {}
+    for state in automaton['states']:
+        # Each state has an epsilon closure that contains itself
+        eclosures[state] = [state]
+        for transition in automaton['transitions']:
+            # Any transition from this state by epsilon is added to the epsilon closure
+            if transition['from'] == state and transition['input'] == 'E':
+                eclosures[state].append(transition['to'])
+                # But we also have to retroactively reperctute 
+                # this to all epsilon-closures that include this state
+                for i in eclosures:
+                    ec = eclosures[i]
+                    if state in ec and transition['to'] not in ec:
+                        ec.append(transition['to'])
+    # Sorting each epsilon closure for readability
+    eclosures = {k: sorted(v) for k, v in eclosures.items()}
+    # Now we can determinize the automaton
+    dfa = {'id': automaton['id'] + '-DETERMINIZED'}
+    dfa['alphabet'] = automaton['alphabet'].copy()
+    original_initial = automaton['initialStates'][0] # We know there is only one initial state
+    initial_state = original_initial
+    dfa['initialStates'] = initial_state 
+    composite_states = [[initial_state]]
+    transitions = []
+    i = 0
+    while i < len(composite_states): # Since we are appending to this list in the loop, we can't use a for loop
+        states = composite_states[i]
+        for letter in dfa['alphabet']:
+            to = []
+            for state in states:
+                for s in eclosures[state]:
+                    for transition in automaton['transitions']:
+                        if transition['from'] == s and transition['input'] == letter:
+                            to.append(transition['to'])
+            to = sorted(list(set(to))) # Remove duplicates and sort
+            transitions.append({'from': states, 'input': letter, 'to': to})
+            if to not in composite_states and to != []:
+                composite_states.append(to)
+        i += 1 
+    dfa['states'] = composite_states
+    dfa['transitions'] = transitions
+    dfa['finalStates'] = [state for state in composite_states if any(any(e in automaton['finalStates'] for e in eclosures[s]) for s in state)]
+    # Now, we have to convert composite states to strings in initialStates, finalStates, states and transitions
+    dfa['initialStates'] = ['.'.join(eclosures[dfa['initialStates'][0]])]
+    for i in range(len(dfa['states'])):
+        states = []
+        composite = dfa['states'][i]
+        for s in composite:
+            states+= eclosures[s]
+        dfa['states'][i] = '.'.join(sorted(list(set(states))))
+    for i in range(len(dfa['finalStates'])):
+        states = []
+        composite = dfa['finalStates'][i]
+        for s in composite:
+            states+= eclosures[s]
+        dfa['finalStates'][i] = '.'.join(sorted(list(set(states))))
+    for i in range(len(dfa['transitions'])):
+        transition = dfa['transitions'][i]
+        from_states = []
+        for s in transition['from']:
+            from_states+= eclosures[s]
+        transition['from'] = '.'.join(sorted(list(set(from_states))))
+        to_states = []
+        for s in transition['to']:
+            to_states+= eclosures[s]
+        transition['to'] = '.'.join(sorted(list(set(to_states))))
+    print(dfa)
+    return dfa
 
 
 def associate_states_transitions(automaton: dict, states: List[str]) -> List[dict]:
@@ -260,19 +338,18 @@ def determinization_and_completion_automaton(automaton: dict) ->dict:
     # Calling the completion function upon the automaton
     completed = completion(automaton)
 
+    is_async = False
+    for transition in automaton['transitions']:
+        if transition['input'] == 'E':
+            is_async = True
+            break
     # Calling the determinize function over that same completed automaton
-    determinized = determinize(completed)
+    determinized = determinize(completed) if not is_async else determinize_async(completed)
     
     return determinized
 
-
 if __name__ == "__main__":
-    from Int1_5_algorithms import get_automaton_by_id
-    from Int1_5_algorithms import display_automaton
     import json
     automata = json.load(open("src/automata/automata.json"))
+    determinize_async(automata[30])
     
-
-    for myautomaton in automata:
-        completedOne = completion(myautomaton)
-        display_automaton(completedOne)
